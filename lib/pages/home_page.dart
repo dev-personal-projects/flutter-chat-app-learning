@@ -5,8 +5,7 @@ class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   //sign out method
-  void logout () async
-  {
+  void logout() async {
     await AuthService().signOut();
   }
 
@@ -21,14 +20,23 @@ class HomePage extends StatelessWidget {
         backgroundColor: Theme.of(context).colorScheme.primary,
         actions: [
           IconButton(
-              onPressed: () async {
-                logout();
+            onPressed: () async {
+              logout();
               // Navigation will be handled by AuthGate
             },
-            icon:  Icon(Icons.logout, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.tertiary),
+            icon: Icon(Icons.logout,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.tertiary),
           ),
         ],
-      ), body:  Center(child: Text('Welcome to the Home Page'  , style: TextStyle(color: Theme.of(context).colorScheme.tertiary, fontSize: 24, fontWeight: FontWeight.bold))),
+      ),
+      drawer: const Drawer(),
+      body: Center(
+          child: Text('Welcome to the Home Page',
+              style: TextStyle(
+                  color: Theme.of(context).colorScheme.tertiary,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold))),
     );
   }
 }

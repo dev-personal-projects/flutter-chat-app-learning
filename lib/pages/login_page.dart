@@ -102,7 +102,7 @@ class _LoginPageState extends State<LoginPage> {
             color: Theme.of(context).colorScheme.primary,
           ),
 
-          SizedBox(height: 50),
+          const SizedBox(height: 30),
 
           Text(
             "Welcome back, You've been missed!",
@@ -113,19 +113,20 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ),
 
-          const SizedBox(height: 25),
+          const SizedBox(height: 20),
           //email textfield
           MyTextfield(
             hintText: "Email",
             obscureText: false,
             controller: _emailController,
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 8),
           //password textfield
           MyTextfield(
-              hintText: "Password",
-              obscureText: true,
-              controller: _passwordController),
+            hintText: "Password",
+            obscureText: true,
+            controller: _passwordController,
+          ),
 
           // //forgot password?
           // TextButton(
@@ -138,7 +139,7 @@ class _LoginPageState extends State<LoginPage> {
           //         fontSize: 16,
           //       ),
           //     ))
-          const SizedBox(height: 25),
+          const SizedBox(height: 20),
           //sign in button
           _isLoading
               ? const CircularProgressIndicator()
@@ -149,7 +150,7 @@ class _LoginPageState extends State<LoginPage> {
           //o,r continue with
           //google sign in
           //not a member? register now
-          const SizedBox(height: 25),
+          const SizedBox(height: 15),
 
           Row(
             mainAxisAlignment: MainAxisAlignment.center,

@@ -20,8 +20,8 @@
 
 ### Prerequisites
 
-- Flutter SDK (3.10.0 or higher)
-- Dart SDK
+- Flutter SDK (3.24.0 or higher)
+- Dart SDK (3.0.0 or higher)
 - Android Studio / VS Code with Flutter extensions
 - iOS Simulator (for macOS) or Android Emulator
 - Git
@@ -56,13 +56,19 @@ This project is built alongside:
 ```
 lib/
 ├── main.dart                 # App entry point
-├── models/                  # Data models
-├── screens/                 # UI screens
-├── widgets/                 # Reusable widgets
-├── services/                # Business logic & API calls
-├── providers/               # State management
-├── utils/                   # Helper functions & constants
-└── theme/                   # App theming & styling
+├── auth/                     # Authentication logic
+│   ├── auth_service.dart    # Firebase authentication service
+│   ├── auth_gate.dart       # Authentication state gate
+│   └── login_or_register.dart # Login/Register toggle page
+├── pages/                    # App screens
+│   ├── login_page.dart      # User login screen
+│   ├── register_page.dart   # User registration screen
+│   └── home_page.dart       # Main home screen
+├── components/               # Reusable UI components
+│   ├── my_button.dart       # Custom button widget
+│   └── my_textfield.dart    # Custom text field widget
+└── themes/                   # App theming
+    └── light_mode.dart       # Light theme configuration
 ```
 
 ## 🗺️ Development Roadmap
@@ -70,13 +76,16 @@ lib/
 ### Phase 1: Foundation ✅
 - [x] Project setup
 - [x] Basic Flutter structure
-- [ ] UI/UX design planning
-- [ ] Theme configuration
+- [x] UI/UX design planning
+- [x] Theme configuration
+- [x] Reusable components (Button, TextField)
 
-### Phase 2: Authentication
-- [ ] Login screen
-- [ ] Registration screen
-- [ ] User authentication (Firebase Auth)
+### Phase 2: Authentication ✅
+- [x] Login screen with form validation
+- [x] Registration screen with password confirmation
+- [x] User authentication (Firebase Auth)
+- [x] AuthGate for navigation control
+- [x] Sign out functionality
 - [ ] User profile management
 
 ### Phase 3: Core Features
@@ -100,13 +109,13 @@ lib/
 
 ## 🛠️ Tech Stack
 
-- **Framework**: Flutter 3.10.0+
-- **Language**: Dart
-- **State Management**: Provider / Riverpod / Bloc (TBD)
-- **Backend**: Firebase / Supabase (TBD)
-- **Authentication**: Firebase Auth
-- **Database**: Firestore / Supabase Database
-- **Storage**: Firebase Storage
+- **Framework**: Flutter 3.24.0+
+- **Language**: Dart 3.0.0+
+- **State Management**: StatefulWidget (current), Provider / Riverpod (future)
+- **Backend**: Firebase
+- **Authentication**: Firebase Auth ✅
+- **Database**: Firestore (planned)
+- **Storage**: Firebase Storage (planned)
 
 ## 📝 Documentation
 
@@ -140,4 +149,24 @@ Built as a learning project while following Flutter development tutorials.
 
 ---
 
-**Status**: 🚧 In Development | **Last Updated**: 2024
+**Status**: 🚧 In Development | **Last Updated**: December 2024
+
+## 🎉 Current Progress
+
+### ✅ Completed Features
+- **Authentication System**: Complete login and registration flow with Firebase
+- **UI Components**: Custom reusable button and text field components
+- **Theme System**: Light mode theme with responsive design
+- **Form Validation**: Input validation and error handling
+- **Loading States**: Loading indicators during authentication
+- **Navigation**: AuthGate for automatic navigation based on auth state
+
+### 🚧 In Progress
+- Chat functionality
+- User profile management
+
+### 📋 Next Steps
+- Implement chat list screen
+- Add real-time messaging
+- User profile page
+- Dark mode theme

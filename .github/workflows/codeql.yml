@@ -100,40 +100,31 @@ jobs:
         # Prefix the list here with "+" to use these queries and those in the config file.
         # queries: security-extended,security-and-quality
 
-    - name: Generate Gradle wrapper script
+    - name: Set up Gradle
       working-directory: ./android
       run: |
-        # gradlew is gitignored, so we need to create it
-        # Verify wrapper jar exists
-        if [ ! -f "gradle/wrapper/gradle-wrapper.jar" ]; then
-          echo "Error: gradle-wrapper.jar not found!"
-          exit 1
-        fi
-        echo "✓ gradle-wrapper.jar found"
-        # Create a proper gradlew script using printf to avoid YAML issues
-        printf '%s\n' \
-          '#!/bin/sh' \
-          'APP_HOME="$(cd "$(dirname "$0")" && pwd)"' \
-          'WRAPPER_JAR="$APP_HOME/gradle/wrapper/gradle-wrapper.jar"' \
-          'if [ ! -f "$WRAPPER_JAR" ]; then' \
-          '    echo "Error: gradle-wrapper.jar not found at $WRAPPER_JAR"' \
-          '    exit 1' \
-          'fi' \
-          'exec java -classpath "$WRAPPER_JAR" org.gradle.wrapper.GradleWrapperMain "$@"' > gradlew
-        chmod +x gradlew
-        echo "✓ gradlew created and made executable"
-        ls -la gradlew
-        # Test that it works
-        ./gradlew --version || echo "Note: Gradle wrapper test completed"
+        # Both gradlew and gradle-wrapper.jar are gitignored
+        # Get Gradle version from wrapper properties and install it directly
+        GRADLE_VERSION=$(grep "distributionUrl" gradle/wrapper/gradle-wrapper.properties | sed 's/.*gradle-\([0-9.]*\)-.*/\1/')
+        echo "Gradle version needed: $GRADLE_VERSION"
+        echo "GRADLE_VERSION=$GRADLE_VERSION" >> $GITHUB_ENV
+        
+        # Download and install Gradle
+        cd /tmp
+        wget -q "https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip"
+        unzip -q "gradle-${GRADLE_VERSION}-bin.zip"
+        GRADLE_HOME="/tmp/gradle-${GRADLE_VERSION}"
+        echo "GRADLE_HOME=$GRADLE_HOME" >> $GITHUB_ENV
+        echo "PATH=$GRADLE_HOME/bin:$PATH" >> $GITHUB_ENV
+        export PATH="$GRADLE_HOME/bin:$PATH"
+        gradle --version
 
     - name: Build Android project for CodeQL
       working-directory: ./android
       run: |
-        # Verify gradlew works and can download Gradle if needed
-        ./gradlew --version
-        # Build the project - CodeQL will trace this build
-        # Using clean build to ensure CodeQL can trace all dependencies
-        ./gradlew clean assembleDebug --no-daemon --stacktrace
+        # Use installed Gradle to build
+        export PATH="$GRADLE_HOME/bin:$PATH"
+        gradle clean assembleDebug --no-daemon --stacktrace
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v4

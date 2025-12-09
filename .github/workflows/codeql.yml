@@ -29,8 +29,9 @@ jobs:
     - name: Set up Flutter
       uses: subosito/flutter-action@v2
       with:
-        flutter-version: 'latest'
+        flutter-version: '3.19.0'
         channel: 'stable'
+        cache: true
 
     - name: Set up JDK
       uses: actions/setup-java@v4
@@ -60,12 +61,13 @@ jobs:
     - name: Create local.properties for Android build
       working-directory: ./android
       run: |
-        # Use the Flutter SDK path from environment
-        FLUTTER_SDK_PATH="${{ env.FLUTTER_SDK }}"
-        if [ -z "$FLUTTER_SDK_PATH" ]; then
+        # Use the Flutter SDK path from environment (set in previous step)
+        if [ -z "$FLUTTER_SDK" ]; then
           # Fallback: get from which command
           FLUTTER_BIN=$(which flutter)
           FLUTTER_SDK_PATH=$(dirname $(dirname "$FLUTTER_BIN"))
+        else
+          FLUTTER_SDK_PATH="$FLUTTER_SDK"
         fi
         echo "flutter.sdk=$FLUTTER_SDK_PATH" > local.properties
         

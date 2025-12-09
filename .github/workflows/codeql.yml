@@ -104,15 +104,33 @@ jobs:
       working-directory: ./android
       run: |
         # gradlew is gitignored, so we need to create it
-        # Create a simple gradlew script that uses the wrapper jar
-        printf '#!/bin/sh\nAPP_HOME=$( cd "${0%%/*}" && pwd -P ) || exit\nCLASSPATH=$APP_HOME/gradle/wrapper/gradle-wrapper.jar\nexec java -classpath "$CLASSPATH" org.gradle.wrapper.GradleWrapperMain "$@"\n' > gradlew
+        # Verify wrapper jar exists
+        if [ ! -f "gradle/wrapper/gradle-wrapper.jar" ]; then
+          echo "Error: gradle-wrapper.jar not found!"
+          exit 1
+        fi
+        echo "✓ gradle-wrapper.jar found"
+        # Create a proper gradlew script using printf to avoid YAML issues
+        printf '%s\n' \
+          '#!/bin/sh' \
+          'APP_HOME="$(cd "$(dirname "$0")" && pwd)"' \
+          'WRAPPER_JAR="$APP_HOME/gradle/wrapper/gradle-wrapper.jar"' \
+          'if [ ! -f "$WRAPPER_JAR" ]; then' \
+          '    echo "Error: gradle-wrapper.jar not found at $WRAPPER_JAR"' \
+          '    exit 1' \
+          'fi' \
+          'exec java -classpath "$WRAPPER_JAR" org.gradle.wrapper.GradleWrapperMain "$@"' > gradlew
         chmod +x gradlew
         echo "✓ gradlew created and made executable"
         ls -la gradlew
+        # Test that it works
+        ./gradlew --version || echo "Note: Gradle wrapper test completed"
 
     - name: Build Android project for CodeQL
       working-directory: ./android
       run: |
+        # Verify gradlew works and can download Gradle if needed
+        ./gradlew --version
         # Build the project - CodeQL will trace this build
         # Using clean build to ensure CodeQL can trace all dependencies
         ./gradlew clean assembleDebug --no-daemon --stacktrace

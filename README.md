@@ -184,7 +184,7 @@ Built as a learning project while following Flutter development tutorials with M
 
 ---
 
-**Status**: 🚧 In Development | **Last Updated**: December 2024
+**Status**: 🚧 In Development | **Last Updated**: December 2025
 
 ## 🎉 Current Progress
 

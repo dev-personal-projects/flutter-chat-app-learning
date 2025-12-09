@@ -2,6 +2,17 @@
 
 > A comprehensive Flutter chat application built while learning mobile development. This project follows along with tutorials and serves as a hands-on learning experience for building real-time chat applications with Flutter.
 
+## 📑 Quick Navigation
+
+- [🚀 Getting Started](#-getting-started)
+- [📁 Project Structure](#-project-structure)
+- [🗺️ Development Roadmap](#️-development-roadmap)
+- [📝 Documentation](#-documentation)
+  - [Learning Docs](docs/LEARNING_NOTES.md) | [Challenges](docs/CHALLENGES.md) | [Resources](docs/RESOURCES.md)
+  - [Project Setup](.github/REPOSITORY_SETUP.md) | [Best Practices](.github/PROJECT_SUGGESTIONS.md)
+- [🎉 Current Progress](#-current-progress)
+- [👤 Author](#-author)
+
 ## 📋 Repository Description
 
 **`flutter-chat-app-learning`** - A step-by-step Flutter chat application project designed for learning mobile development. This repository documents the entire journey of building a production-ready chat app, including UI/UX design, real-time messaging, authentication, and backend integration.
@@ -30,7 +41,7 @@
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/flutter-chat-app-learning.git
+git clone https://github.com/cm-collins/flutter-chat-app-learning.git
 cd flutter-chat-app-learning
 ```
 
@@ -50,6 +61,8 @@ This project is built alongside:
 - **Mitch Koko** - YouTube tutorials and mobile development guidance
 - Flutter official documentation
 - Community best practices
+
+> 📖 **For a complete list of resources, see [docs/RESOURCES.md](docs/RESOURCES.md)**
 
 ## 📁 Project Structure
 
@@ -119,6 +132,19 @@ lib/
 
 ## 📝 Documentation
 
+This project includes comprehensive documentation to track the learning journey:
+
+### 📚 Learning Documentation
+- **[Learning Notes](docs/LEARNING_NOTES.md)** - Key concepts, insights, and learnings throughout development
+- **[Challenges & Solutions](docs/CHALLENGES.md)** - Problems faced during development and how they were resolved
+- **[Resources](docs/RESOURCES.md)** - Curated list of helpful tutorials, articles, and community resources
+
+### 🛠️ Project Setup & Guidelines
+- **[Project Suggestions](.github/PROJECT_SUGGESTIONS.md)** - Best practices and suggestions for project success
+- **[Repository Setup Guide](.github/REPOSITORY_SETUP.md)** - Complete guide for GitHub repository setup and configuration
+- **[CodeQL Workflow](.github/workflows/README.md)** - Documentation for security analysis workflow
+
+### 📋 In-Code Documentation
 Each major feature includes:
 - Code comments explaining the implementation
 - Commit messages describing changes
@@ -139,7 +165,16 @@ This project is for educational purposes.
 
 ## 👤 Author
 
-Built as a learning project while following Flutter development tutorials.
+**Collins Munene**
+
+- 🌐 GitHub: [@cm-collins](https://github.com/cm-collins)
+- 📧 Email: dev-collins@outlook.com
+- 🐦 X (Twitter): [@collins63760613](https://twitter.com/collins63760613)
+- 💼 LinkedIn: [Collins Munene](https://www.linkedin.com/in/collins-munene-547365299)
+
+**About**: DevOps & SRE Engineer • Software Engineer • Cloud Architect • Mobile Developer
+
+Built as a learning project while following Flutter development tutorials with Mitch Koko.
 
 ## 🙏 Acknowledgments
 

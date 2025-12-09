@@ -41,15 +41,46 @@ jobs:
     - name: Set up Android SDK
       uses: android-actions/setup-android@v3
 
+    - name: Get Flutter SDK path
+      id: flutter-path
+      run: |
+        # Flutter action installs to a specific location
+        # Get the actual Flutter SDK path from the flutter binary location
+        FLUTTER_BIN=$(which flutter)
+        FLUTTER_SDK=$(dirname $(dirname "$FLUTTER_BIN"))
+        echo "FLUTTER_SDK=$FLUTTER_SDK" >> $GITHUB_ENV
+        echo "Flutter SDK path: $FLUTTER_SDK"
+        # Verify it exists
+        if [ -d "$FLUTTER_SDK" ]; then
+          echo "✓ Flutter SDK verified at: $FLUTTER_SDK"
+        else
+          echo "✗ Warning: Flutter SDK path not found"
+        fi
+
     - name: Create local.properties for Android build
       working-directory: ./android
       run: |
-        echo "flutter.sdk=$FLUTTER_ROOT" > local.properties
+        # Use the Flutter SDK path from environment
+        FLUTTER_SDK_PATH="${{ env.FLUTTER_SDK }}"
+        if [ -z "$FLUTTER_SDK_PATH" ]; then
+          # Fallback: get from which command
+          FLUTTER_BIN=$(which flutter)
+          FLUTTER_SDK_PATH=$(dirname $(dirname "$FLUTTER_BIN"))
+        fi
+        echo "flutter.sdk=$FLUTTER_SDK_PATH" > local.properties
+        
+        # Set Android SDK path
         if [ -n "$ANDROID_HOME" ]; then
           echo "sdk.dir=$ANDROID_HOME" >> local.properties
         elif [ -n "$ANDROID_SDK_ROOT" ]; then
           echo "sdk.dir=$ANDROID_SDK_ROOT" >> local.properties
         fi
+        
+        echo "Created local.properties:"
+        cat local.properties
+
+    - name: Get Flutter dependencies
+      run: flutter pub get
 
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v4
@@ -60,9 +91,13 @@ jobs:
         # Prefix the list here with "+" to use these queries and those in the config file.
         # queries: security-extended,security-and-quality
 
-    - name: Autobuild
-      uses: github/codeql-action/autobuild@v4
-      # This step is optional for Java/Kotlin projects
+    - name: Build Android project for CodeQL
+      working-directory: ./android
+      run: |
+        chmod +x gradlew
+        # Build the project - CodeQL will trace this build
+        # Using clean build to ensure CodeQL can trace all dependencies
+        ./gradlew clean assembleDebug --no-daemon --stacktrace
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v4

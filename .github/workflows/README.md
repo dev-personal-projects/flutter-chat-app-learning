@@ -16,10 +16,21 @@ The workflow was failing because `android/local.properties` was missing. This fi
    - Using a default path as a last resort
 
 2. **Created proper CodeQL workflow**: The workflow now:
-   - Sets up Flutter SDK
-   - Sets up Java JDK
-   - Sets up Android SDK
-   - Generates `local.properties` before CodeQL analysis
+   - Sets up Flutter SDK using `subosito/flutter-action`
+   - Sets up Java JDK 17
+   - Sets up Android SDK using `android-actions/setup-android`
+   - Detects Flutter SDK path automatically
+   - Generates `local.properties` with correct paths
+   - Fetches Flutter dependencies (`flutter pub get`)
+   - Builds Android project manually (replacing autobuild) for CodeQL to trace
+   - Performs CodeQL analysis on Java/Kotlin code
+
+### Build Process
+
+The workflow uses **manual build steps** instead of CodeQL's autobuild because:
+- Flutter projects have a specific build structure
+- Autobuild doesn't work well with Flutter's Gradle setup
+- Manual build ensures all dependencies are properly resolved
 
 ### Note
 

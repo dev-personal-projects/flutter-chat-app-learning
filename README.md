@@ -69,17 +69,20 @@ This project is built alongside:
 ```
 lib/
 ├── main.dart                 # App entry point
-├── auth/                     # Authentication logic
-│   ├── auth_service.dart    # Firebase authentication service
-│   ├── auth_gate.dart       # Authentication state gate
-│   └── login_or_register.dart # Login/Register toggle page
+├── services/                 # Business logic & services
+│   └── auth/                 # Authentication services
+│       ├── auth_service.dart    # Firebase authentication service
+│       ├── auth_gate.dart       # Authentication state gate
+│       └── login_or_register.dart # Login/Register toggle page
 ├── pages/                    # App screens
 │   ├── login_page.dart      # User login screen
 │   ├── register_page.dart   # User registration screen
-│   └── home_page.dart       # Main home screen
+│   ├── home_page.dart       # Main home screen
+│   └── settings_page.dart   # Settings screen
 ├── components/               # Reusable UI components
 │   ├── my_button.dart       # Custom button widget
-│   └── my_textfield.dart    # Custom text field widget
+│   ├── my_textfield.dart    # Custom text field widget
+│   └── my_drawer.dart       # Navigation drawer widget
 └── themes/                   # App theming
     └── light_mode.dart       # Light theme configuration
 ```
@@ -190,11 +193,14 @@ Built as a learning project while following Flutter development tutorials with M
 
 ### ✅ Completed Features
 - **Authentication System**: Complete login and registration flow with Firebase
-- **UI Components**: Custom reusable button and text field components
+- **UI Components**: Custom reusable button, text field, and drawer components
 - **Theme System**: Light mode theme with responsive design
 - **Form Validation**: Input validation and error handling
 - **Loading States**: Loading indicators during authentication
 - **Navigation**: AuthGate for automatic navigation based on auth state
+- **Navigation Drawer**: Side drawer with Home, Settings, and Logout functionality
+- **Settings Page**: Basic settings screen structure
+- **Project Structure**: Reorganized auth services into `lib/services/auth/` for better organization
 
 ### 🚧 In Progress
 - Chat functionality

@@ -100,6 +100,26 @@ A: Wrap your content in `SingleChildScrollView` for vertical scrolling, or use `
 - Use `const` constructors where possible for better performance
 - Remove `const` when accessing Theme.of(context) or other runtime values
 
+#### Navigation Drawer
+- `Drawer` widget provides a slide-out menu from the side
+- Use `Scaffold.drawer` property to add drawer to any page
+- `Navigator.pop(context)` closes the drawer
+- Use `Column` with `MainAxisAlignment.spaceBetween` to separate top and bottom sections
+- Drawer items use `ListTile` with `leading` icons and `onTap` handlers
+
+#### StreamBuilder for Authentication
+- `StreamBuilder` listens to Firebase `authStateChanges()` stream
+- Automatically rebuilds when auth state changes (login/logout)
+- Handles `ConnectionState.waiting` for loading states
+- `snapshot.hasData` indicates user is logged in
+- No manual navigation needed - StreamBuilder handles it automatically
+
+#### Project Structure Organization
+- Moved auth services from `lib/auth/` to `lib/services/auth/` for better organization
+- Separates business logic (services) from UI (pages)
+- Makes codebase more maintainable and scalable
+- Follows Flutter best practices for project structure
+
 ---
 
 **Note**: Update this file regularly as you learn new concepts!

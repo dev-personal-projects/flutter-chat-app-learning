@@ -1,20 +1,16 @@
-import 'package:chatapp/components/my_drawer.dart';
 import 'package:flutter/material.dart';
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+class SettingsPage extends StatelessWidget {
+  const SettingsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
-        elevation: 0,
-        centerTitle: true,
-        title: const Text('Home'),
+        title: const Text('Settings'),
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
-      drawer: const MyDrawer(),
     );
   }
 }

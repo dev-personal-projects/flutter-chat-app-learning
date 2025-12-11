@@ -1,4 +1,5 @@
 import 'package:chatapp/services/auth/auth_service.dart';
+import 'package:chatapp/services/auth/auth_exceptions.dart';
 import 'package:chatapp/components/my_button.dart';
 import 'package:flutter/material.dart';
 import 'package:chatapp/components/my_textfield.dart';
@@ -60,12 +61,24 @@ class _LoginPageState extends State<LoginPage> {
         // TODO: Navigate to home page or chat page
       }
     } catch (e) {
-      // Handle errors
+      // Handle errors with user-friendly messages
       if (context.mounted) {
+        final errorMessage = e is AuthException
+            ? e.message
+            : 'An unexpected error occurred. Please try again.';
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(e.toString().replaceFirst('Exception: ', '')),
+            content: Text(errorMessage),
             backgroundColor: Colors.red,
+            duration: const Duration(seconds: 4),
+            action: SnackBarAction(
+              label: 'Dismiss',
+              textColor: Colors.white,
+              onPressed: () {
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              },
+            ),
           ),
         );
       }
@@ -90,7 +103,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,

@@ -8,7 +8,7 @@ class AuthGate extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
+    return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
         // Show loading indicator while checking auth state
@@ -23,8 +23,8 @@ class AuthGate extends StatelessWidget {
         }
 
         // If user is logged in, show home page
-        if (snapshot.hasData) {
-          return const HomePage();
+        if (snapshot.hasData && snapshot.data != null) {
+          return HomePage();
         }
 
         // If user is not logged in, show login/register page

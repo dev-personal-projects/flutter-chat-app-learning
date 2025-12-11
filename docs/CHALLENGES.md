@@ -192,5 +192,55 @@ if (context.mounted) {
 
 ---
 
+### Challenge: Poor Error Messages from Firebase
+**Problem**: Firebase errors were showing technical codes like "user-not-found" or "email-already-in-use" which are not user-friendly.
+
+**Solution**: 
+- Created `AuthException` class for custom error handling
+- Created `AuthErrorHandler` to map Firebase error codes to user-friendly messages
+- Updated all auth methods to use the error handler
+- Added dismissible SnackBars with longer duration for better UX
+
+**Key Learnings**:
+- Always provide user-friendly error messages
+- Map technical errors to actionable guidance
+- Use custom exception classes for better error management
+- Consider UX when displaying errors (duration, dismissibility)
+
+**Code Reference**:
+```dart
+// In AuthService
+on FirebaseAuthException catch (e) {
+  throw AuthErrorHandler.handleAuthException(e);
+}
+
+// In UI
+catch (e) {
+  final errorMessage = e is AuthException
+      ? e.message
+      : 'An unexpected error occurred. Please try again.';
+  // Display user-friendly message
+}
+```
+
+---
+
+### Challenge: Users Not Appearing in Home Page
+**Problem**: After implementing user list, users weren't showing up on the home page.
+
+**Solution**:
+- Made `currentUserId` reactive by checking it on each stream emission
+- Improved Firestore query filtering
+- Added better error handling for Firestore operations
+- Ensured user documents are created properly during registration/login
+
+**Key Learnings**:
+- Stream values should be evaluated reactively, not captured once
+- Always filter out current user from user lists
+- Check Firestore security rules for read permissions
+- Verify data is being written correctly to Firestore
+
+---
+
 **Note**: Document challenges as you encounter them - it helps with future reference and helps others learning!
 

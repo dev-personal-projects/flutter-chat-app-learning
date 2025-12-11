@@ -71,11 +71,13 @@ class MyDrawer extends StatelessWidget {
                   ),
                   //navigate to settings page
                   onTap: () {
+                    // Close drawer first
+                    Navigator.pop(context);
+                    // Then navigate to settings page
                     Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) => const SettingsPage()));
-                    Navigator.pop(context);
                   },
                 ),
               ),

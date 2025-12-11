@@ -70,10 +70,13 @@ This project is built alongside:
 lib/
 ├── main.dart                 # App entry point
 ├── services/                 # Business logic & services
-│   └── auth/                 # Authentication services
-│       ├── auth_service.dart    # Firebase authentication service
-│       ├── auth_gate.dart       # Authentication state gate
-│       └── login_or_register.dart # Login/Register toggle page
+│   ├── auth/                 # Authentication services
+│   │   ├── auth_service.dart    # Firebase authentication service
+│   │   ├── auth_gate.dart       # Authentication state gate
+│   │   ├── auth_exceptions.dart # User-friendly error handling
+│   │   └── login_or_register.dart # Login/Register toggle page
+│   └── chat/                 # Chat services
+│       └── chat_service.dart    # Firestore chat operations
 ├── pages/                    # App screens
 │   ├── login_page.dart      # User login screen
 │   ├── register_page.dart   # User registration screen
@@ -82,7 +85,8 @@ lib/
 ├── components/               # Reusable UI components
 │   ├── my_button.dart       # Custom button widget
 │   ├── my_textfield.dart    # Custom text field widget
-│   └── my_drawer.dart       # Navigation drawer widget
+│   ├── my_drawer.dart       # Navigation drawer widget
+│   └── user_tile.dart       # User list item widget
 └── themes/                   # App theming
     └── light_mode.dart       # Light theme configuration
 ```
@@ -102,10 +106,14 @@ lib/
 - [x] User authentication (Firebase Auth)
 - [x] AuthGate for navigation control
 - [x] Sign out functionality
+- [x] Comprehensive error handling with user-friendly messages
+- [x] Improved auth flow (redirect to login after registration)
 - [ ] User profile management
 
 ### Phase 3: Core Features
-- [ ] Chat list screen
+- [x] User list screen (home page)
+- [x] Chat service with user stream
+- [x] Navigation drawer
 - [ ] Individual chat screen
 - [ ] Message input & sending
 - [ ] Real-time message updates
@@ -119,9 +127,9 @@ lib/
 
 ### Phase 5: Polish & Optimization
 - [ ] Performance optimization
-- [ ] Error handling
+- [x] Error handling (user-friendly auth errors)
 - [ ] Testing
-- [ ] Documentation
+- [x] Documentation
 
 ## 🛠️ Tech Stack
 
@@ -130,7 +138,7 @@ lib/
 - **State Management**: StatefulWidget (current), Provider / Riverpod (future)
 - **Backend**: Firebase
 - **Authentication**: Firebase Auth ✅
-- **Database**: Firestore (planned)
+- **Database**: Firestore ✅ (user data storage)
 - **Storage**: Firebase Storage (planned)
 
 ## 📝 Documentation
@@ -193,14 +201,18 @@ Built as a learning project while following Flutter development tutorials with M
 
 ### ✅ Completed Features
 - **Authentication System**: Complete login and registration flow with Firebase
-- **UI Components**: Custom reusable button, text field, and drawer components
+- **Error Handling**: Comprehensive user-friendly error messages for all auth operations
+- **UI Components**: Custom reusable button, text field, drawer, and user tile components
 - **Theme System**: Light mode theme with responsive design
 - **Form Validation**: Input validation and error handling
 - **Loading States**: Loading indicators during authentication
 - **Navigation**: AuthGate for automatic navigation based on auth state
 - **Navigation Drawer**: Side drawer with Home, Settings, and Logout functionality
+- **User List**: Home page displaying all users with real-time updates
+- **Chat Service**: Firestore integration for user data streaming
 - **Settings Page**: Basic settings screen structure
-- **Project Structure**: Reorganized auth services into `lib/services/auth/` for better organization
+- **Project Structure**: Reorganized services into `lib/services/` for better organization
+- **Auth Flow**: Improved registration flow (redirects to login after signup)
 
 ### 🚧 In Progress
 - Chat functionality

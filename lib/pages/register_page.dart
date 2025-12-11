@@ -1,4 +1,5 @@
 import 'package:chatapp/services/auth/auth_service.dart';
+import 'package:chatapp/services/auth/auth_exceptions.dart';
 import 'package:chatapp/components/my_button.dart';
 import 'package:chatapp/components/my_textfield.dart';
 import 'package:flutter/material.dart';
@@ -62,22 +63,52 @@ class _RegisterPageState extends State<RegisterPage> {
       // Attempt to sign up
       await _authService.signUpWithEmailAndPassword(email, password);
 
-      // Success - user is signed up
+      // Success - user account created
       if (context.mounted) {
+        // Sign out the user immediately after registration
+        // This ensures they need to log in explicitly
+        await _authService.signOut();
+
+        // Show success message
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Registration successful!'),
+            content: Text('Account created successfully! Please log in.'),
             backgroundColor: Colors.green,
+            duration: Duration(seconds: 3),
           ),
         );
+
+        // Clear form fields
+        _emailController.clear();
+        _passwordController.clear();
+        _confirmPasswordController.clear();
+
+        // Navigate to login page by calling onTap (which toggles to login)
+        // Wait a moment for the snackbar to show
+        await Future.delayed(const Duration(milliseconds: 500));
+        if (context.mounted && widget.onTap != null) {
+          widget.onTap!();
+        }
       }
     } catch (e) {
-      // Handle errors
+      // Handle errors with user-friendly messages
       if (context.mounted) {
+        final errorMessage = e is AuthException
+            ? e.message
+            : 'An unexpected error occurred. Please try again.';
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(e.toString().replaceFirst('Exception: ', '')),
+            content: Text(errorMessage),
             backgroundColor: Colors.red,
+            duration: const Duration(seconds: 4),
+            action: SnackBarAction(
+              label: 'Dismiss',
+              textColor: Colors.white,
+              onPressed: () {
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              },
+            ),
           ),
         );
       }
@@ -103,7 +134,7 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(

@@ -120,6 +120,28 @@ A: Wrap your content in `SingleChildScrollView` for vertical scrolling, or use `
 - Makes codebase more maintainable and scalable
 - Follows Flutter best practices for project structure
 
+#### Error Handling Best Practices
+- Create custom exception classes for better error management
+- Map technical error codes to user-friendly messages
+- Use `AuthException` class to wrap Firebase errors
+- Provide actionable error messages (e.g., "Please try again or reset your password")
+- Show errors in SnackBars with dismiss actions for better UX
+- Handle both specific exceptions (FirebaseAuthException) and generic errors
+
+#### Firestore Real-time Streams
+- Use `snapshots()` to get real-time updates from Firestore
+- Filter data reactively by checking current user ID on each stream emission
+- Use `StreamBuilder` to automatically rebuild UI when data changes
+- Handle connection states (waiting, active, done) appropriately
+- Filter out current user from lists to avoid showing self
+
+#### User Experience Improvements
+- Add RefreshIndicator for pull-to-refresh functionality
+- Show empty states with helpful messages when no data is available
+- Display loading indicators during async operations
+- Clear form fields after successful operations
+- Provide clear navigation feedback (e.g., redirect to login after registration)
+
 ---
 
 **Note**: Update this file regularly as you learn new concepts!

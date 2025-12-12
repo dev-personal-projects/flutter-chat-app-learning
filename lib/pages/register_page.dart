@@ -69,6 +69,9 @@ class _RegisterPageState extends State<RegisterPage> {
         // This ensures they need to log in explicitly
         await _authService.signOut();
 
+        // Check if context is still valid after async operation
+        if (!context.mounted) return;
+
         // Show success message
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -205,7 +208,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   GestureDetector(
                     onTap: widget.onTap,
-                    child: Text(
+                    child: const Text(
                       "Login now",
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),

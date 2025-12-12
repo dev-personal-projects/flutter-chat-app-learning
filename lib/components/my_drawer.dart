@@ -13,11 +13,15 @@ class MyDrawer extends StatelessWidget {
         context: context,
         builder: (context) => const Center(child: CircularProgressIndicator()));
     await AuthService().signOut();
+    // Check if context is still valid before using it
+    if (!context.mounted) return;
     //pop the loading indicator
     Navigator.pop(context);
+    // Check again before navigation
+    if (!context.mounted) return;
     //navigate to login page
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => LoginOrRegister()));
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => const LoginOrRegister()));
   }
 
   @override

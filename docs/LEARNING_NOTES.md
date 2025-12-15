@@ -5,11 +5,13 @@ This document tracks key concepts, insights, and learnings throughout the Flutte
 ## Flutter Fundamentals
 
 ### Widgets
+
 - **StatelessWidget**: Widgets that don't change (immutable)
 - **StatefulWidget**: Widgets that can change over time
 - **BuildContext**: Provides location in widget tree
 
 ### State Management
+
 - Understanding when to use StatefulWidget vs StatelessWidget
 - setState() for local state
 - Provider/Riverpod/Bloc for global state (to be explored)
@@ -19,18 +21,21 @@ This document tracks key concepts, insights, and learnings throughout the Flutte
 ### Date: December 2024
 
 #### StatefulWidget vs StatelessWidget
+
 - **StatelessWidget**: Used for widgets that don't need to manage state (e.g., display-only components)
 - **StatefulWidget**: Used when widgets need to change over time (e.g., forms with user input, loading states)
 - **Key Learning**: Login and Register pages need to be StatefulWidget because they manage TextEditingController instances and loading states
 - **Example**: LoginPage was converted from StatelessWidget to StatefulWidget to properly manage form controllers and loading state
 
 #### TextEditingController
+
 - Used to control and read values from TextField widgets
 - Must be disposed in the `dispose()` method to prevent memory leaks
 - Access text value with `controller.text.trim()` to remove whitespace
 - **Best Practice**: Always dispose controllers in StatefulWidget's dispose method
 
 #### Firebase Authentication
+
 - `FirebaseAuth.instance` provides access to authentication methods
 - `signInWithEmailAndPassword()` for login
 - `signUpWithEmailAndPassword()` for registration
@@ -39,24 +44,28 @@ This document tracks key concepts, insights, and learnings throughout the Flutte
 - **Error Handling**: Catch exceptions and display user-friendly messages using SnackBar
 
 #### Responsive Design with MediaQuery
+
 - Use `MediaQuery.of(context).size.width/height` to get screen dimensions
 - Calculate responsive sizes as percentages (e.g., `screenWidth * 0.05` for 5% padding)
 - Adjust font sizes and spacing based on screen size
 - **Example**: MyTextfield uses responsive sizing to adapt to different screen sizes
 
 #### ScaffoldMessenger for User Feedback
+
 - Use `ScaffoldMessenger.of(context).showSnackBar()` to show temporary messages
 - Perfect for showing success/error messages after async operations
 - Automatically dismisses after a few seconds
 - **Best Practice**: Check `context.mounted` before showing SnackBar in async callbacks
 
 #### SingleChildScrollView for Overflow Prevention
+
 - Wraps content that might overflow on smaller screens
 - Works with Column/Row widgets
 - Prevents "Bottom overflowed by X pixels" errors
 - **Use Case**: Registration page with multiple text fields needs scrolling
 
 #### Loading States
+
 - Use boolean flag (`_isLoading`) to track async operation status
 - Show `CircularProgressIndicator` when loading
 - Disable buttons during loading to prevent multiple submissions
@@ -75,17 +84,21 @@ This document tracks key concepts, insights, and learnings throughout the Flutte
 ## Questions & Answers
 
 ### Q: When should I use StatefulWidget vs StatelessWidget?
+
 A: Use StatefulWidget when you need to:
+
 - Manage form input (TextEditingController)
 - Track loading states
 - Update UI based on user interactions
 - Handle animations or timers
-Use StatelessWidget for static content that doesn't change.
+  Use StatelessWidget for static content that doesn't change.
 
 ### Q: Why do I need to dispose TextEditingController?
+
 A: Controllers hold references to resources. If not disposed, they can cause memory leaks. Always dispose in the `dispose()` method of StatefulWidget.
 
 ### Q: How do I prevent overflow errors in Flutter?
+
 A: Wrap your content in `SingleChildScrollView` for vertical scrolling, or use `Expanded`/`Flexible` widgets within `Row`/`Column` to manage space distribution.
 
 ---
@@ -101,6 +114,7 @@ A: Wrap your content in `SingleChildScrollView` for vertical scrolling, or use `
 - Remove `const` when accessing Theme.of(context) or other runtime values
 
 #### Navigation Drawer
+
 - `Drawer` widget provides a slide-out menu from the side
 - Use `Scaffold.drawer` property to add drawer to any page
 - `Navigator.pop(context)` closes the drawer
@@ -108,6 +122,7 @@ A: Wrap your content in `SingleChildScrollView` for vertical scrolling, or use `
 - Drawer items use `ListTile` with `leading` icons and `onTap` handlers
 
 #### StreamBuilder for Authentication
+
 - `StreamBuilder` listens to Firebase `authStateChanges()` stream
 - Automatically rebuilds when auth state changes (login/logout)
 - Handles `ConnectionState.waiting` for loading states
@@ -115,12 +130,14 @@ A: Wrap your content in `SingleChildScrollView` for vertical scrolling, or use `
 - No manual navigation needed - StreamBuilder handles it automatically
 
 #### Project Structure Organization
+
 - Moved auth services from `lib/auth/` to `lib/services/auth/` for better organization
 - Separates business logic (services) from UI (pages)
 - Makes codebase more maintainable and scalable
 - Follows Flutter best practices for project structure
 
 #### Error Handling Best Practices
+
 - Create custom exception classes for better error management
 - Map technical error codes to user-friendly messages
 - Use `AuthException` class to wrap Firebase errors
@@ -129,6 +146,7 @@ A: Wrap your content in `SingleChildScrollView` for vertical scrolling, or use `
 - Handle both specific exceptions (FirebaseAuthException) and generic errors
 
 #### Firestore Real-time Streams
+
 - Use `snapshots()` to get real-time updates from Firestore
 - Filter data reactively by checking current user ID on each stream emission
 - Use `StreamBuilder` to automatically rebuild UI when data changes
@@ -136,6 +154,7 @@ A: Wrap your content in `SingleChildScrollView` for vertical scrolling, or use `
 - Filter out current user from lists to avoid showing self
 
 #### User Experience Improvements
+
 - Add RefreshIndicator for pull-to-refresh functionality
 - Show empty states with helpful messages when no data is available
 - Display loading indicators during async operations
@@ -144,5 +163,47 @@ A: Wrap your content in `SingleChildScrollView` for vertical scrolling, or use `
 
 ---
 
-**Note**: Update this file regularly as you learn new concepts!
+### Date: December 2025
 
+#### Theming with ThemeData and ColorScheme
+
+- Centralized colors in `AppColors` and typography in `AppTypography`
+- Created `ThemeConfig` with `lightTheme` and `darkTheme` using `ColorScheme.light` / `ColorScheme.dark`
+- Avoided deprecated fields where possible and used `surface`, `onSurface`, `primaryContainer`, etc.
+- Used `Theme.of(context).colorScheme` in components instead of hard‑coding colors
+
+#### Theme Management with Provider and ChangeNotifier
+
+- Implemented `ThemeProvider` extending `ChangeNotifier` to hold `ThemeMode`
+- Wrapped `MaterialApp` in `ChangeNotifierProvider` + `Consumer<ThemeProvider>`
+- Used `theme`, `darkTheme`, and `themeMode` on `MaterialApp`
+- Persisted theme choice with `SharedPreferences` so the app remembers light/dark mode
+
+#### Splash Screen Architecture
+
+- Added `SplashPage` as the first screen (set as `home` in `MyApp`)
+- Used `initState` + `Future.delayed` to wait ~2.5 seconds before navigating
+- Used `Navigator.pushReplacement` so the user cannot go back to the splash screen
+- Checked `mounted` before using `context` inside async callbacks to avoid errors
+
+#### Reusable UI Components (KISS + Clean Code)
+
+- Refactored `WhatsappLogo` into a simple, theme‑aware stateless widget
+  - Selects light or dark logo asset based on `Theme.of(context).brightness`
+  - Uses a single `_defaultSize` constant and a nullable `size` parameter
+- Refactored `UserTile` to:
+  - Use `InkWell` for ripple feedback instead of `GestureDetector`
+  - Read `colorScheme` once and reuse it (cleaner and more efficient)
+  - Use `AppTypography.bodyLarge` for consistent text styling
+  - Extract avatar building into a private `_buildAvatar` method
+
+#### Android Launcher Icon & App Naming
+
+- Used the `flutter_launcher_icons` dev dependency to generate launcher icons
+- Configured `flutter_launcher_icons` in `pubspec.yaml` with `image_path` pointing to `assets/whatsapp-icon-light.png`
+- Ran `flutter pub run flutter_launcher_icons` to generate all Android/iOS icon sizes
+- Updated `AndroidManifest.xml` `android:label` to show a friendly app name (“WhatsApp Clone”)
+
+---
+
+**Note**: Update this file regularly as you learn new concepts!

@@ -40,17 +40,20 @@
 ### Installation
 
 1. Clone the repository:
+
 ```bash
-git clone https://github.com/cm-collins/flutter-chat-app-learning.git
+git clone https://github.com/dev-personal-projects/flutter-chat-app-learning.git
 cd flutter-chat-app-learning
 ```
 
 2. Install dependencies:
+
 ```bash
 flutter pub get
 ```
 
 3. Run the app:
+
 ```bash
 flutter run
 ```
@@ -58,6 +61,7 @@ flutter run
 ## 📚 Learning Resources
 
 This project is built alongside:
+
 - **Mitch Koko** - YouTube tutorials and mobile development guidance
 - Flutter official documentation
 - Community best practices
@@ -69,56 +73,57 @@ This project is built alongside:
 ```
 lib/
 ├── main.dart                 # App entry point
-├── services/                 # Business logic & services
-│   ├── auth/                 # Authentication services
-│   │   ├── auth_service.dart    # Firebase authentication service
-│   │   ├── auth_gate.dart       # Authentication state gate
-│   │   ├── auth_exceptions.dart # User-friendly error handling
-│   │   └── login_or_register.dart # Login/Register toggle page
-│   └── chat/                 # Chat services
-│       └── chat_service.dart    # Firestore chat operations
+├── constant/                 # Design system constants
+│   ├── app_colors.dart       # Color palette (light/dark mode)
+│   └── app_typography.dart   # Typography system
+├── utils/                    # Utility functions
+│   ├── theme_config.dart     # Theme configuration (light/dark)
+│   ├── theme_provider.dart   # Theme state management
+│   └── theme_helper.dart     # Theme helper utilities
 ├── pages/                    # App screens
-│   ├── login_page.dart      # User login screen
-│   ├── register_page.dart   # User registration screen
-│   ├── home_page.dart       # Main home screen
-│   └── settings_page.dart   # Settings screen
+│   ├── splash_page.dart      # WhatsApp-style splash screen
+│   ├── home_page.dart        # Main home screen
+│   ├── chat_page.dart        # Chat screen (placeholder)
+│   └── settings_page.dart    # Settings screen
 ├── components/               # Reusable UI components
-│   ├── my_button.dart       # Custom button widget
-│   ├── my_textfield.dart    # Custom text field widget
-│   ├── my_drawer.dart       # Navigation drawer widget
-│   └── user_tile.dart       # User list item widget
-└── themes/                   # App theming
-    └── light_mode.dart       # Light theme configuration
+│   └── whatsapp_logo.dart   # Theme-aware WhatsApp logo
+└── services/                 # Business logic & services
+    └── chat/                 # Chat services
+        └── chat_service.dart # Chat service (stub for future)
 ```
 
 ## 🗺️ Development Roadmap
 
 ### Phase 1: Foundation ✅
+
 - [x] Project setup
 - [x] Basic Flutter structure
 - [x] UI/UX design planning
-- [x] Theme configuration
-- [x] Reusable components (Button, TextField)
+- [x] Complete theming system (light/dark mode)
+- [x] Design system constants (colors, typography)
+- [x] Splash screen implementation
+- [x] WhatsApp-style branding
 
-### Phase 2: Authentication ✅
-- [x] Login screen with form validation
-- [x] Registration screen with password confirmation
-- [x] User authentication (Firebase Auth)
-- [x] AuthGate for navigation control
-- [x] Sign out functionality
-- [x] Comprehensive error handling with user-friendly messages
-- [x] Improved auth flow (redirect to login after registration)
-- [ ] User profile management
+### Phase 2: Authentication (Refactored)
+
+- [x] Removed old Firebase authentication
+- [x] Cleaned codebase for new auth implementation
+- [ ] WhatsApp-style phone number authentication (planned)
+- [ ] OTP verification flow (planned)
+- [ ] User profile management (planned)
 
 ### Phase 3: Core Features
-- [x] User list screen (home page)
-- [x] Chat service with user stream
+
+- [x] Splash screen with branding
+- [x] Home page structure
 - [x] Navigation drawer
+- [ ] Chat list screen
 - [ ] Individual chat screen
 - [ ] Message input & sending
 - [ ] Real-time message updates
 
 ### Phase 4: Advanced Features
+
 - [ ] Image sharing
 - [ ] File attachments
 - [ ] Push notifications
@@ -126,8 +131,10 @@ lib/
 - [ ] Message read receipts
 
 ### Phase 5: Polish & Optimization
+
 - [ ] Performance optimization
-- [x] Error handling (user-friendly auth errors)
+- [x] Code quality improvements (KISS principles)
+- [x] Theme system implementation
 - [ ] Testing
 - [x] Documentation
 
@@ -135,28 +142,33 @@ lib/
 
 - **Framework**: Flutter 3.24.0+
 - **Language**: Dart 3.0.0+
-- **State Management**: StatefulWidget (current), Provider / Riverpod (future)
-- **Backend**: Firebase
-- **Authentication**: Firebase Auth ✅
-- **Database**: Firestore ✅ (user data storage)
-- **Storage**: Firebase Storage (planned)
+- **State Management**: Provider (theme management)
+- **Theming**: Material Design 3 with custom color system
+- **Backend**: To be determined (Firebase removed)
+- **Authentication**: To be implemented (WhatsApp-style)
+- **Database**: To be determined
+- **Storage**: To be determined
 
 ## 📝 Documentation
 
 This project includes comprehensive documentation to track the learning journey:
 
 ### 📚 Learning Documentation
+
 - **[Learning Notes](docs/LEARNING_NOTES.md)** - Key concepts, insights, and learnings throughout development
 - **[Challenges & Solutions](docs/CHALLENGES.md)** - Problems faced during development and how they were resolved
 - **[Resources](docs/RESOURCES.md)** - Curated list of helpful tutorials, articles, and community resources
 
 ### 🛠️ Project Setup & Guidelines
+
 - **[Project Suggestions](.github/PROJECT_SUGGESTIONS.md)** - Best practices and suggestions for project success
 - **[Repository Setup Guide](.github/REPOSITORY_SETUP.md)** - Complete guide for GitHub repository setup and configuration
 - **[CodeQL Workflow](.github/workflows/README.md)** - Documentation for security analysis workflow
 
 ### 📋 In-Code Documentation
+
 Each major feature includes:
+
 - Code comments explaining the implementation
 - Commit messages describing changes
 - Progress notes in this README
@@ -165,6 +177,7 @@ Each major feature includes:
 ## 🤝 Contributing
 
 This is a learning project. Feel free to:
+
 - Open issues for bugs or questions
 - Suggest improvements
 - Share learning resources
@@ -197,29 +210,78 @@ Built as a learning project while following Flutter development tutorials with M
 
 **Status**: 🚧 In Development | **Last Updated**: December 2025
 
+## 🎨 Theme System
+
+The app now features a complete theming system with:
+
+- **Light Mode**: Clean white backgrounds with dark text
+- **Dark Mode**: Dark blue-grey backgrounds with light text
+- **Automatic Detection**: Follows system theme preference
+- **Manual Toggle**: Users can switch themes manually
+- **Persistence**: Theme preference is saved and restored
+
+## 🚀 App Flow
+
+```
+App Launch
+    ↓
+SplashPage (2.5 seconds)
+  - WhatsApp logo
+  - "from FACEBOOK" branding
+    ↓
+HomePage
+  - Direct access (no authentication)
+  - Ready for new auth implementation
+```
+
 ## 🎉 Current Progress
 
 ### ✅ Completed Features
-- **Authentication System**: Complete login and registration flow with Firebase
-- **Error Handling**: Comprehensive user-friendly error messages for all auth operations
-- **UI Components**: Custom reusable button, text field, drawer, and user tile components
-- **Theme System**: Light mode theme with responsive design
-- **Form Validation**: Input validation and error handling
-- **Loading States**: Loading indicators during authentication
-- **Navigation**: AuthGate for automatic navigation based on auth state
-- **Navigation Drawer**: Side drawer with Home, Settings, and Logout functionality
-- **User List**: Home page displaying all users with real-time updates
-- **Chat Service**: Firestore integration for user data streaming
-- **Settings Page**: Basic settings screen structure
-- **Project Structure**: Reorganized services into `lib/services/` for better organization
-- **Auth Flow**: Improved registration flow (redirects to login after signup)
+
+**Theming & Design System:**
+
+- ✅ Complete light and dark mode theme system
+- ✅ Material Design 3 compliant theming
+- ✅ Color palette from Figma design system (Primary, Secondary, Neutral, Danger)
+- ✅ Comprehensive typography system
+- ✅ Theme persistence with SharedPreferences
+- ✅ System theme detection
+- ✅ Theme switching functionality
+
+**UI/UX:**
+
+- ✅ WhatsApp-style splash screen with logo and branding
+- ✅ Theme-aware WhatsApp logo component
+- ✅ Splash screen navigation flow
+- ✅ Home page structure
+- ✅ Settings page structure
+- ✅ Navigation drawer
+
+**Code Quality:**
+
+- ✅ Clean codebase following KISS principles
+- ✅ Removed all Firebase dependencies
+- ✅ Removed old authentication flow
+- ✅ Improved component structure
+- ✅ Clean project organization
+
+**Android Configuration:**
+
+- ✅ App name configured ("WhatsApp Clone")
+- ✅ App icon generation setup
+- ✅ Clean Android build configuration
 
 ### 🚧 In Progress
+
+- New authentication flow (WhatsApp-style)
 - Chat functionality
-- User profile management
+- Backend integration
 
 ### 📋 Next Steps
+
+- Implement WhatsApp-style phone number authentication
+- Add OTP verification flow
 - Implement chat list screen
 - Add real-time messaging
-- User profile page
-- Dark mode theme
+- User profile management
+- Backend integration (to be determined)

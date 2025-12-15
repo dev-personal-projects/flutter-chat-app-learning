@@ -1,4 +1,3 @@
-import 'package:chatapp/components/my_drawer.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatelessWidget {
@@ -14,7 +13,6 @@ class HomePage extends StatelessWidget {
         title: const Text('Home'),
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
-      drawer: const MyDrawer(),
       body: const Center(
         child: Text('Home Page'),
       ),

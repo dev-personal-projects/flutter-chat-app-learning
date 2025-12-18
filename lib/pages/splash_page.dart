@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:chatapp/components/whatsapp_logo.dart';
 import 'package:chatapp/constant/app_colors.dart';
 import 'package:chatapp/constant/app_typography.dart';
 import 'package:chatapp/pages/home_page.dart';
+import 'package:chatapp/pages/phone_number_page.dart';
+import 'package:chatapp/services/auth/auth_provider.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -15,14 +18,33 @@ class _SplashPageState extends State<SplashPage> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 2, milliseconds: 500), () {
-      if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const HomePage()),
-        );
-      }
-    });
+    _checkAuthAndNavigate();
+  }
+
+  Future<void> _checkAuthAndNavigate() async {
+    await Future.delayed(const Duration(seconds: 2, milliseconds: 500));
+
+    if (!mounted) return;
+
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+    while (authProvider.status == AuthStatus.initial && mounted) {
+      await Future.delayed(const Duration(milliseconds: 100));
+    }
+
+    if (!mounted) return;
+
+    final isAuthenticated = authProvider.isAuthenticated;
+
+    if (mounted) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) =>
+              isAuthenticated ? const HomePage() : const PhoneNumberPage(),
+        ),
+      );
+    }
   }
 
   @override

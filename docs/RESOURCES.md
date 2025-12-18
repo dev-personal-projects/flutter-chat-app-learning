@@ -59,6 +59,37 @@ Curated list of helpful resources for learning Flutter and building the chat app
 - [Provider Package Docs](https://pub.dev/packages/provider) - State management with `ChangeNotifierProvider`
 - [flutter_launcher_icons](https://pub.dev/packages/flutter_launcher_icons) - Auto-generate app launcher icons
 
+## State Management Resources
+
+### Provider (Currently Used)
+
+- [Provider Package](https://pub.dev/packages/provider) - Official package
+- [Provider Documentation](https://pub.dev/documentation/provider/latest/) - Complete API reference
+- [Provider Tutorial](https://docs.flutter.dev/development/data-and-backend/state-mgmt/simple) - Official Flutter guide
+
+### Riverpod
+
+- [Riverpod Package](https://pub.dev/packages/flutter_riverpod) - Next-gen state management
+- [Riverpod Documentation](https://riverpod.dev/) - Comprehensive docs
+- [Riverpod Tutorial](https://codewithandrea.com/articles/flutter-state-management-riverpod/) - Beginner-friendly guide
+
+### BLoC
+
+- [BLoC Package](https://pub.dev/packages/flutter_bloc) - Business Logic Component
+- [BLoC Documentation](https://bloclibrary.dev/) - Official BLoC library
+- [BLoC Tutorial](https://www.youtube.com/watch?v=THCkkQ-V1-8) - YouTube tutorial series
+
+### GetX
+
+- [GetX Package](https://pub.dev/packages/get) - All-in-one solution
+- [GetX Documentation](https://pub.dev/documentation/get/latest/) - Complete docs
+- [GetX Tutorial](https://www.youtube.com/watch?v=1ukSR1GRtMU) - Getting started
+
+### Comparison Articles
+
+- [State Management Comparison](https://codewithandrea.com/articles/flutter-state-management-options/) - Detailed comparison
+- [Choosing State Management](https://docs.flutter.dev/development/data-and-backend/state-mgmt/options) - Official Flutter guide
+
 ---
 
 **Note**: Add resources as you discover them!

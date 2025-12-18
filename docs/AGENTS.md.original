@@ -1,0 +1,405 @@
+# AGENTS – Flutter Chat App
+
+## Project context (high level)
+
+- **Project Name:** WhatsApp Clone Chat App
+- **Domain:** Real-time messaging application with phone-based authentication
+- **Architecture:**
+  - **Flutter** mobile application (this repo)
+  - **Firebase** for authentication (Phone Auth) and backend services
+  - **Provider** for state management
+  - **Material Design 3** for UI/UX
+
+Feature-specific details (e.g. authentication flow, chat features) live in separate docs under `docs/` and in per-feature plan files.
+
+This file defines **global rules** that apply to all Flutter code in this repo.
+
+---
+
+## 1. Flutter & Dart rules
+
+1. **Flutter SDK version**
+
+   - Use **Flutter SDK 3.0.0+** (as specified in `pubspec.yaml`)
+   - Keep dependencies up to date but test thoroughly before upgrading major versions
+   - Document any breaking changes when upgrading dependencies
+
+2. **Dart language features**
+
+   - Use **null safety** (required in Dart 2.12+)
+   - Prefer **const constructors** where possible for better performance
+   - Use **async/await** for asynchronous operations instead of `.then()` chains
+   - Use **final** for variables that don't change after initialization
+   - Use **late** only when necessary and document why
+
+3. **Widget composition**
+
+   - Prefer **composition over inheritance**
+   - Extract reusable widgets into separate files under `lib/components/`
+   - Keep widgets small and focused (Single Responsibility Principle)
+   - Use `StatelessWidget` by default; only use `StatefulWidget` when state is needed
+
+4. **State management with Provider**
+
+   - Use **Provider** package for global state management
+   - Create providers extending `ChangeNotifier` for reactive state
+   - Use `ChangeNotifierProvider` or `MultiProvider` at the app root
+   - Access providers using `Provider.of<T>(context)` or `Consumer<T>`
+   - Always call `notifyListeners()` after state changes
+   - Dispose resources properly in providers
+
+---
+
+## 2. Project structure & organization
+
+1. **Directory structure**
+
+   ```
+   lib/
+   ├── main.dart                 # App entry point
+   ├── constant/                 # Design system constants
+   │   ├── app_colors.dart       # Color palette
+   │   └── app_typography.dart   # Typography system
+   ├── utils/                    # Utility functions & helpers
+   │   ├── theme_config.dart     # Theme configuration
+   │   ├── theme_provider.dart   # Theme state management
+   │   ├── app_routes.dart       # Route management
+   │   └── phone_formatter.dart  # Phone number utilities
+   ├── pages/                    # App screens/pages
+   ├── components/               # Reusable UI components
+   ├── services/                 # Business logic & services
+   │   ├── auth/                 # Authentication services
+   │   └── chat/                 # Chat services
+   └── firebase_options.dart     # Firebase configuration
+   ```
+
+2. **File naming conventions**
+
+   - Use **snake_case** for file names: `phone_number_page.dart`
+   - Use **PascalCase** for class names: `PhoneNumberPage`
+   - Use **camelCase** for variables and functions: `phoneNumber`, `handleSubmit()`
+   - Prefix private members with underscore: `_privateMethod()`
+
+3. **Component organization**
+
+   - One widget class per file
+   - Keep related widgets together (e.g., all auth pages in `pages/`)
+   - Extract reusable UI pieces into `components/`
+   - Keep business logic in `services/`
+
+---
+
+## 3. State management patterns
+
+1. **Local state (setState)**
+
+   - Use `setState()` for state that belongs to a single widget
+   - Examples: form inputs, UI toggles, loading indicators
+   - Keep state as local as possible
+
+2. **Global state (Provider)**
+
+   - Use Provider for state shared across multiple widgets
+   - Examples: authentication state, theme preferences, user data
+   - Create providers in `services/` or `utils/` directories
+   - Always check `mounted` before calling `setState()` in async callbacks
+
+3. **State management best practices**
+
+   - Start simple: use `setState` for local state, Provider for shared state
+   - Don't over-engineer: choose the simplest solution that works
+   - Keep state close: don't lift state higher than necessary
+   - Separate concerns: business logic in services, UI in widgets
+   - Test state management: write tests for providers and services
+
+---
+
+## 4. Firebase & authentication
+
+1. **Firebase configuration**
+
+   - Use `firebase_options.dart` for Firebase configuration
+   - Never commit sensitive keys or credentials
+   - Use environment variables for different environments (dev/prod)
+   - Keep `firebase_options.dart` updated with correct project credentials
+
+2. **Authentication service**
+
+   - Centralize auth logic in `lib/services/auth/auth_service.dart`
+   - Use `AuthProvider` for reactive auth state management
+   - Handle errors gracefully with custom exceptions
+   - Always check authentication status before protected operations
+
+3. **Error handling**
+
+   - Create custom exception classes in `lib/services/auth/auth_exceptions.dart`
+   - Provide user-friendly error messages
+   - Use `try-catch` blocks for async operations
+   - Show errors to users via `SnackBar` or error widgets
+   - Log errors for debugging (never expose sensitive info)
+
+4. **Phone authentication**
+
+   - Format phone numbers to E.164 format (+country code + number)
+   - Validate phone numbers before sending OTP
+   - Handle OTP expiration and resend functionality
+   - Ensure billing is enabled in Firebase Console (required for Phone Auth)
+
+---
+
+## 5. Routing & navigation
+
+1. **Centralized routing**
+
+   - Define all routes in `lib/utils/app_routes.dart`
+   - Use route name constants to avoid typos
+   - Create helper methods for navigation with type safety
+   - Pass data via route arguments when needed
+
+2. **Navigation patterns**
+
+   - Use `Navigator.push()` for forward navigation
+   - Use `Navigator.pushReplacement()` when you don't want back navigation
+   - Use `Navigator.pushAndRemoveUntil()` to clear navigation stack
+   - Always check `mounted` before navigating in async callbacks
+
+3. **Route arguments**
+
+   - Use `ModalRoute.of(context)?.settings.arguments` to receive arguments
+   - Type cast arguments safely with null checks
+   - Document required arguments in route helper methods
+
+---
+
+## 6. UI & styling
+
+1. **Design system**
+
+   - Use centralized colors from `lib/constant/app_colors.dart`
+   - Use centralized typography from `lib/constant/app_typography.dart`
+   - Support both light and dark themes
+   - Use `Theme.of(context)` to access theme values
+
+2. **Material Design 3**
+
+   - Follow Material Design 3 guidelines
+   - Use `ColorScheme` for theme colors
+   - Use semantic colors (primary, secondary, error, etc.)
+   - Avoid deprecated properties; use modern equivalents
+
+3. **Component styling**
+
+   - Use `AppTypography` for consistent text styling
+   - Use `AppColors` for consistent colors
+   - Make components theme-aware (adapt to light/dark mode)
+   - Use `InkWell` for tappable areas (better UX than `GestureDetector`)
+
+4. **Responsive design**
+
+   - Use `MediaQuery` for screen size information
+   - Use percentages for responsive sizing
+   - Test on different screen sizes
+   - Use `SingleChildScrollView` to prevent overflow
+
+---
+
+## 7. Code quality & best practices
+
+1. **KISS principle (Keep It Simple, Stupid)**
+
+   - Write simple, clear code
+   - Avoid over-engineering
+   - Remove unnecessary comments (code should be self-documenting)
+   - Extract complex logic into helper functions
+
+2. **DRY principle (Don't Repeat Yourself)**
+
+   - Extract repeated code into reusable functions/widgets
+   - Use constants for repeated values
+   - Create utility functions for common operations
+
+3. **SOLID principles**
+
+   - **Single Responsibility**: Each class/widget should have one reason to change
+   - **Open/Closed**: Open for extension, closed for modification
+   - **Liskov Substitution**: Subtypes must be substitutable for their base types
+   - **Interface Segregation**: Many specific interfaces are better than one general interface
+   - **Dependency Inversion**: Depend on abstractions, not concretions
+
+4. **Clean code**
+
+   - Use meaningful variable and function names
+   - Keep functions small and focused
+   - Remove dead code and unused imports
+   - Follow consistent formatting (use `dart format`)
+
+---
+
+## 8. Error handling
+
+1. **Exception handling**
+
+   - Use custom exception classes for different error types
+   - Catch specific exceptions before general ones
+   - Always handle errors gracefully (never crash silently)
+   - Show user-friendly error messages
+
+2. **Async error handling**
+
+   - Always use `try-catch` for async operations
+   - Check `mounted` before using `context` in async callbacks
+   - Use `finally` blocks for cleanup when needed
+
+3. **Error display**
+
+   - Use `ScaffoldMessenger` for temporary error messages
+   - Use error widgets for persistent errors
+   - Provide retry options when appropriate
+   - Never expose stack traces to users
+
+---
+
+## 9. Performance optimization
+
+1. **Widget optimization**
+
+   - Use `const` constructors where possible
+   - Extract widgets to prevent unnecessary rebuilds
+   - Use `Consumer` with specific providers to limit rebuilds
+   - Use `const` widgets in lists to improve performance
+
+2. **Memory management**
+
+   - Always dispose controllers, streams, and timers
+   - Cancel subscriptions in `dispose()` method
+   - Use `mounted` checks before `setState()` in async callbacks
+   - Avoid memory leaks by properly disposing resources
+
+3. **Build optimization**
+
+   - Use `flutter build` with appropriate flags for release
+   - Enable tree-shaking for smaller app size
+   - Use `--split-debug-info` for release builds
+   - Profile with Flutter DevTools
+
+---
+
+## 10. Testing
+
+1. **Unit tests**
+
+   - Write unit tests for business logic (services, utilities)
+   - Test providers and state management
+   - Use `test` package for unit tests
+
+2. **Widget tests**
+
+   - Write widget tests for UI components
+   - Test user interactions and state changes
+   - Use `flutter_test` package
+
+3. **Integration tests**
+
+   - Write integration tests for critical user flows
+   - Test authentication flow, navigation, etc.
+   - Use `integration_test` package
+
+---
+
+## 11. Security
+
+1. **Sensitive data**
+
+   - Never commit API keys, secrets, or credentials
+   - Use environment variables or secure storage
+   - Don't log sensitive information
+
+2. **Input validation**
+
+   - Always validate user input
+   - Sanitize data before sending to backend
+   - Use type-safe validation (e.g., phone number format)
+
+3. **Authentication**
+
+   - Always verify authentication state
+   - Protect sensitive routes/pages
+   - Handle token expiration gracefully
+
+---
+
+## 12. Documentation
+
+1. **Code documentation**
+
+   - Write self-documenting code (clear names, structure)
+   - Add comments only when necessary
+   - Document complex algorithms or business logic
+   - Keep documentation in `docs/` folder up to date
+
+2. **API documentation**
+
+   - Document public APIs (classes, methods, properties)
+   - Use Dart doc comments (`///`) for public APIs
+   - Document parameters, return values, and exceptions
+
+---
+
+## 13. Git & version control
+
+1. **Branch naming**
+
+   - Use descriptive branch names: `feature/phone-auth`, `fix/otp-verification`
+   - Prefix with type: `feature/`, `fix/`, `refactor/`, `docs/`
+
+2. **Commit messages**
+
+   - Use clear, descriptive commit messages
+   - Follow conventional commits format when possible
+   - Reference issues/PRs when applicable
+
+3. **Pull requests**
+
+   - Write clear PR descriptions
+   - List changes and breaking changes
+   - Request reviews before merging
+   - Ensure all tests pass
+
+---
+
+## 14. Dependencies & packages
+
+1. **Package management**
+
+   - Use `pubspec.yaml` for dependency management
+   - Keep dependencies up to date
+   - Document why specific packages are used
+   - Avoid adding unnecessary dependencies
+
+2. **Package selection**
+
+   - Prefer official Flutter/Dart packages
+   - Check package maintenance and popularity
+   - Read package documentation before using
+   - Test packages thoroughly before committing
+
+---
+
+## 15. Accessibility
+
+1. **Semantic widgets**
+
+   - Use semantic widgets (`Semantics`, `ExcludeSemantics`)
+   - Provide meaningful labels for screen readers
+   - Ensure proper contrast ratios
+
+2. **Touch targets**
+
+   - Make touch targets at least 48x48 pixels
+   - Provide visual feedback for interactions
+   - Ensure keyboard navigation works
+
+---
+
+> If you are an AI agent editing this repo, treat these rules as the **default constraints**. If you need to deviate for a good reason, explain why in the PR or in your plan or chat output.
+

@@ -1,4 +1,4 @@
 {
-    "java.configuration.updateBuildConfiguration": "interactive",
-    "cmake.sourceDirectory": "/home/collinsking/dev-projects-software/mobile /chatapp/linux"
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "cmake.sourceDirectory": "/home/munene/dev/personal-projects/mobile/flutter-chat-app-learning/linux"
 }

@@ -41,6 +41,40 @@ class AuthService {
     }
   }
 
+  Future<UserCredential> signInWithEmail({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      return await _firebaseAuth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+    } on FirebaseAuthException catch (e) {
+      throw _handleAuthException(e);
+    } catch (e) {
+      if (e is AuthException) rethrow;
+      throw const AuthenticationFailedException();
+    }
+  }
+
+  Future<UserCredential> registerWithEmail({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      return await _firebaseAuth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+    } on FirebaseAuthException catch (e) {
+      throw _handleAuthException(e);
+    } catch (e) {
+      if (e is AuthException) rethrow;
+      throw const AuthenticationFailedException();
+    }
+  }
+
   Future<UserCredential> verifyOTP({
     required String verificationId,
     required String code,
@@ -98,6 +132,16 @@ class AuthService {
         return const QuotaExceededException();
       case 'network-request-failed':
         return const NetworkException();
+      case 'invalid-email':
+        return const InvalidEmailException();
+      case 'user-not-found':
+        return const UserNotFoundException();
+      case 'wrong-password':
+        return const WrongPasswordException();
+      case 'email-already-in-use':
+        return const EmailAlreadyInUseException();
+      case 'weak-password':
+        return const WeakPasswordException();
       default:
         return AuthenticationFailedException(e.message);
     }

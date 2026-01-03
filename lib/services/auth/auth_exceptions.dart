@@ -94,3 +94,48 @@ class BillingNotEnabledException extends AuthException {
           isRetryable: false,
         );
 }
+
+class InvalidEmailException extends AuthException {
+  const InvalidEmailException()
+      : super(
+          message: 'Invalid email address. Please check and try again.',
+          code: 'invalid-email',
+          isRetryable: true,
+        );
+}
+
+class UserNotFoundException extends AuthException {
+  const UserNotFoundException()
+      : super(
+          message: 'No user found with this email.',
+          code: 'user-not-found',
+          isRetryable: true,
+        );
+}
+
+class WrongPasswordException extends AuthException {
+  const WrongPasswordException()
+      : super(
+          message: 'Incorrect password. Please try again.',
+          code: 'wrong-password',
+          isRetryable: true,
+        );
+}
+
+class EmailAlreadyInUseException extends AuthException {
+  const EmailAlreadyInUseException()
+      : super(
+          message: 'This email is already in use. Try signing in instead.',
+          code: 'email-already-in-use',
+          isRetryable: false,
+        );
+}
+
+class WeakPasswordException extends AuthException {
+  const WeakPasswordException()
+      : super(
+          message: 'Password is too weak. Use at least 6 characters.',
+          code: 'weak-password',
+          isRetryable: true,
+        );
+}

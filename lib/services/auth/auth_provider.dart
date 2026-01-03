@@ -8,6 +8,8 @@ enum AuthStatus {
   sendingOTP,
   otpSent,
   verifyingOTP,
+  signingIn,
+  registering,
   authenticated,
   unauthenticated,
   error,
@@ -27,7 +29,10 @@ class AuthProvider extends ChangeNotifier {
   AuthException? get error => _error;
   bool get isAuthenticated => _user != null;
   bool get isLoading =>
-      _status == AuthStatus.sendingOTP || _status == AuthStatus.verifyingOTP;
+      _status == AuthStatus.sendingOTP ||
+      _status == AuthStatus.verifyingOTP ||
+      _status == AuthStatus.signingIn ||
+      _status == AuthStatus.registering;
 
   AuthProvider() {
     _initialize();
@@ -101,6 +106,42 @@ class AuthProvider extends ChangeNotifier {
       _user = null;
       _verificationId = null;
       _status = AuthStatus.unauthenticated;
+      notifyListeners();
+    } catch (e) {
+      _handleError(e);
+    }
+  }
+
+  Future<void> signInWithEmail({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      _status = AuthStatus.signingIn;
+      _error = null;
+      notifyListeners();
+
+      await _authService.signInWithEmail(email: email, password: password);
+      _user = _authService.currentUser;
+      _status = AuthStatus.authenticated;
+      notifyListeners();
+    } catch (e) {
+      _handleError(e);
+    }
+  }
+
+  Future<void> registerWithEmail({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      _status = AuthStatus.registering;
+      _error = null;
+      notifyListeners();
+
+      await _authService.registerWithEmail(email: email, password: password);
+      _user = _authService.currentUser;
+      _status = AuthStatus.authenticated;
       notifyListeners();
     } catch (e) {
       _handleError(e);

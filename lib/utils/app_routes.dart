@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:chatapp/pages/phone_number_page.dart';
 import 'package:chatapp/pages/otp_verification_page.dart';
+import 'package:chatapp/pages/email_auth_page.dart';
 
 /// Centralized route management for the application
 ///
@@ -19,6 +20,7 @@ class AppRoutes {
   // Using static const to ensure they're compile-time constants
   static const String phoneNumber = '/phone-number';
   static const String otpVerification = '/otp-verification';
+  static const String emailAuth = '/email-auth';
 
   // Private constructor to prevent instantiation
   // This is a utility class with only static members
@@ -45,6 +47,7 @@ class AppRoutes {
         // Return OTP verification page with phone number
         return OTPVerificationPage(phoneNumber: phoneNumber);
       },
+      emailAuth: (context) => const EmailAuthPage(),
     };
   }
 
@@ -73,5 +76,10 @@ class AppRoutes {
       otpVerification,
       arguments: {'phoneNumber': phoneNumber},
     );
+  }
+
+  /// Helper method to navigate to email auth page
+  static void navigateToEmailAuth(BuildContext context) {
+    Navigator.pushNamed(context, emailAuth);
   }
 }

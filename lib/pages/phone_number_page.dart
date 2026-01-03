@@ -70,13 +70,19 @@ class _PhoneNumberPageState extends State<PhoneNumberPage> {
         SnackBar(
           content: Text(e.message),
           backgroundColor: Theme.of(context).colorScheme.error,
-          action: e.isRetryable
+          action: e.code == 'billing-not-enabled'
               ? SnackBarAction(
-                  label: 'Retry',
+                  label: 'Use Email',
                   textColor: Colors.white,
-                  onPressed: () => _handleDone(),
+                  onPressed: () => AppRoutes.navigateToEmailAuth(context),
                 )
-              : null,
+              : (e.isRetryable
+                  ? SnackBarAction(
+                      label: 'Retry',
+                      textColor: Colors.white,
+                      onPressed: () => _handleDone(),
+                    )
+                  : null),
         ),
       );
     } catch (e) {
@@ -151,6 +157,42 @@ class _PhoneNumberPageState extends State<PhoneNumberPage> {
                 country: _selectedCountry,
                 autofocus: true,
                 placeholder: 'phone number',
+              ),
+              const SizedBox(height: 24),
+              Row(
+                children: [
+                  Expanded(
+                    child: Divider(
+                      color: colorScheme.onSurface.withValues(alpha: 0.15),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    child: Text(
+                      'OR',
+                      style: AppTypography.labelMedium(
+                        color: textColor.withValues(alpha: 0.6),
+                        fontWeight: AppTypography.fontWeightSemiBold,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Divider(
+                      color: colorScheme.onSurface.withValues(alpha: 0.15),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  onPressed: isLoading
+                      ? null
+                      : () => AppRoutes.navigateToEmailAuth(context),
+                  icon: const Icon(Icons.email_outlined),
+                  label: const Text('Continue with Email'),
+                ),
               ),
               if (isLoading) ...[
                 const SizedBox(height: 24),

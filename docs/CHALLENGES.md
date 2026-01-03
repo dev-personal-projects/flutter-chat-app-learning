@@ -35,6 +35,30 @@ How it was finally resolved
 
 ## Real Challenges Encountered
 
+### Challenge: Firebase Phone Auth blocked by billing (BILLING_NOT_ENABLED)
+
+**Date**: January 2026  
+**Difficulty**: ⭐⭐⭐
+
+**Problem**:
+Phone OTP authentication showed a Firebase error indicating billing was required, blocking development and testing.
+
+**Final Solution**:
+
+- Added **fallback sign-in methods** that do not require billing:
+  - Email/Password
+  - Google OAuth
+- Updated the app flow to start from a unified **SignInPage** where users choose Phone / Email / Google.
+- Documented Google sign-in requirements (SHA-1 + `google-services.json` refresh).
+
+**Key Learnings**:
+
+- Phone Auth may require billing depending on region/project settings.
+- Always provide at least one non-SMS auth method for development and reliability.
+- Document Firebase setup steps (especially SHA-1 for Google sign-in).
+
+---
+
 ### Challenge: Converting StatelessWidget to StatefulWidget
 
 **Date**: December 2024  

@@ -206,6 +206,36 @@ A: Wrap your content in `SingleChildScrollView` for vertical scrolling, or use `
 
 ---
 
+### Date: January 2026
+
+#### Current Authentication Architecture (Phone / Email / Google)
+
+**App entry flow:**
+
+- `SplashPage` checks auth state via `AuthProvider`
+- If signed in → `HomePage`
+- If not signed in → `SignInPage` (single entry screen for all sign-in methods)
+
+**Sign-in methods implemented:**
+
+- **Phone OTP**: `PhoneNumberPage` → `OTPVerificationPage`
+- **Email/Password**: `EmailAuthPage` (register + sign-in toggle)
+- **Google OAuth**: Button on `SignInPage`
+
+**Code structure (best practice separation):**
+
+- **UI**: pages under `lib/pages/`
+- **State**: `AuthProvider` (tracks `AuthStatus`, loading, error, user)
+- **Firebase calls**: `AuthService` (wraps `firebase_auth` + `google_sign_in`)
+- **Navigation**: `AppRoutes` (central route names + helpers)
+
+**Important Firebase setup notes:**
+
+- Phone auth may require billing (error: `BILLING_NOT_ENABLED`) → use Email/Google as fallback during development.
+- Google sign-in requires adding **SHA-1** (and ideally SHA-256) in Firebase Project Settings and re-downloading `google-services.json`.
+
+---
+
 ---
 
 ## State Management in Flutter

@@ -4,6 +4,16 @@ This guide covers Firebase configuration and troubleshooting for the chat app.
 
 ## Firebase Authentication Setup
 
+### Supported Sign-in Methods (Current App Flow)
+
+The app currently supports these sign-in methods:
+
+- **Phone (OTP)**: WhatsApp-style phone verification (may require billing)
+- **Email/Password**: Works without billing
+- **Google OAuth**: Works without billing (requires SHA setup)
+
+The unauthenticated entry screen is **SignInPage** (Phone / Email / Google).
+
 ### Enabling Phone Authentication
 
 If you see this error:
@@ -228,6 +238,67 @@ An internal error has occurred. [BILLING_NOT_ENABLED]
 - [ ] Tested on real device
 - [ ] SMS received successfully
 - [ ] OTP verification working
+
+### Email/Password Authentication (No Billing Required)
+
+1. Firebase Console → **Authentication** → **Sign-in method**
+2. Enable **Email/Password**
+3. Save
+
+**Notes:**
+
+- Email/password is a great fallback when phone billing is blocked.
+- Make sure you’ve added your Android app to the Firebase project and downloaded `google-services.json`.
+
+### Google Sign-In (OAuth) Setup (Recommended Fallback)
+
+#### 1) Enable provider
+
+1. Firebase Console → **Authentication** → **Sign-in method**
+2. Enable **Google**
+3. Set a project support email
+4. Save
+
+#### 2) Add SHA fingerprints (Android)
+
+If you don’t add SHA-1, Google sign-in typically fails with “developer error” / `ApiException: 10`.
+
+Get debug SHA-1:
+
+```bash
+cd android
+./gradlew signingReport
+```
+
+Then in Firebase Console:
+
+1. **Project Settings** → **Your apps** → Android app
+2. Add **SHA-1** (and **SHA-256** if possible)
+3. Save
+
+Repeat for your **release** keystore later (production builds).
+
+#### 3) Download fresh config
+
+1. Firebase Console → **Project Settings** → **Your apps** → Android
+2. Download updated `google-services.json`
+3. Replace: `android/app/google-services.json`
+
+#### 4) Verify
+
+```bash
+flutter clean
+flutter pub get
+flutter run
+```
+
+### When Billing Isn’t Available
+
+If you cannot create a billing account right now:
+
+- Use **Email/Password** and/or **Google** sign-in (recommended).
+- For phone flows, consider **Firebase test phone numbers** in:
+  Firebase Console → Authentication → Sign-in method → Phone → “Phone numbers for testing”.
 
 ---
 

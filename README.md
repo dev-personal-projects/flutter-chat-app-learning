@@ -34,8 +34,64 @@
 - Flutter SDK (3.24.0 or higher)
 - Dart SDK (3.0.0 or higher)
 - Android Studio / VS Code with Flutter extensions
+- Android SDK with the following components:
+  - Android SDK Platform 34 (or latest)
+  - Android SDK Build-Tools 34.0.0
+  - Android SDK Command-line Tools
+  - Android SDK Platform-Tools
 - iOS Simulator (for macOS) or Android Emulator
 - Git
+- Java 17 (for Android builds)
+
+### Android SDK Setup
+
+#### Option 1: Via Android Studio (Recommended)
+
+1. Install [Android Studio](https://developer.android.com/studio)
+2. Open Android Studio → Settings → Languages & Frameworks → Android SDK
+3. Install the required SDK components listed above
+4. Android Studio automatically sets up `ANDROID_HOME`
+
+#### Option 2: Command-Line Installation
+
+```bash
+# Create SDK directory
+mkdir -p ~/Android/Sdk
+
+# Download command-line tools
+cd ~/Android/Sdk
+wget https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -O cmdline-tools.zip
+unzip cmdline-tools.zip
+mkdir -p cmdline-tools/latest
+mv cmdline-tools/bin cmdline-tools/lib cmdline-tools/NOTICE.txt cmdline-tools/source.properties cmdline-tools/latest/
+rm cmdline-tools.zip
+
+# Accept licenses
+yes | ~/Android/Sdk/cmdline-tools/latest/bin/sdkmanager --licenses
+
+# Install required components
+~/Android/Sdk/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
+```
+
+#### Environment Variables
+
+Add to your shell profile (`~/.bashrc`, `~/.zshrc`, or equivalent):
+
+```bash
+export ANDROID_HOME=$HOME/Android/Sdk
+export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
+export PATH=$PATH:$ANDROID_HOME/platform-tools
+```
+
+Then reload: `source ~/.bashrc`
+
+#### Verify Setup
+
+```bash
+flutter doctor -v
+```
+
+All Android toolchain checks should pass ✓
 
 ### Installation
 
@@ -58,6 +114,40 @@ flutter pub get
 flutter run
 ```
 
+### Troubleshooting
+
+#### "SDK location not found" Error
+
+Flutter automatically generates `android/local.properties` with your SDK path. If you get this error:
+
+1. Ensure `ANDROID_HOME` environment variable is set
+2. Or run `flutter config --android-sdk /path/to/your/Android/Sdk`
+3. Run `flutter clean && flutter pub get`
+
+#### NDK Download Issues
+
+The Android Gradle Plugin may download the NDK automatically. If downloads fail:
+
+```bash
+# Manually install NDK (if needed)
+cd /tmp
+wget https://dl.google.com/android/repository/android-ndk-r27-linux.zip -O ndk.zip
+unzip ndk.zip
+mv android-ndk-r27 $ANDROID_HOME/ndk/27.0.12077973
+rm ndk.zip
+```
+
+#### Build Failures
+
+```bash
+# Clean build artifacts
+flutter clean
+cd android && rm -rf .gradle build
+cd ..
+flutter pub get
+flutter run
+```
+
 ## 📚 Learning Resources
 
 This project is built alongside:
@@ -72,24 +162,34 @@ This project is built alongside:
 
 ```
 lib/
-├── main.dart                 # App entry point
-├── constant/                 # Design system constants
-│   ├── app_colors.dart       # Color palette (light/dark mode)
-│   └── app_typography.dart   # Typography system
-├── utils/                    # Utility functions
-│   ├── theme_config.dart     # Theme configuration (light/dark)
-│   ├── theme_provider.dart   # Theme state management
-│   └── theme_helper.dart     # Theme helper utilities
-├── pages/                    # App screens
-│   ├── splash_page.dart      # WhatsApp-style splash screen
-│   ├── home_page.dart        # Main home screen
-│   ├── chat_page.dart        # Chat screen (placeholder)
-│   └── settings_page.dart    # Settings screen
-├── components/               # Reusable UI components
-│   └── whatsapp_logo.dart   # Theme-aware WhatsApp logo
-└── services/                 # Business logic & services
-    └── chat/                 # Chat services
-        └── chat_service.dart # Chat service (stub for future)
+├── main.dart                     # App entry point
+├── constant/                     # Design system constants
+│   ├── app_colors.dart           # Color palette (light/dark mode)
+│   └── app_typography.dart       # Typography system
+├── utils/                        # Utility functions
+│   ├── theme_config.dart         # Theme configuration (light/dark)
+│   ├── theme_provider.dart       # Theme state management
+│   └── theme_helper.dart         # Theme helper utilities
+├── pages/                        # App screens
+│   ├── splash_page.dart          # WhatsApp-style splash screen
+│   ├── phone_number_page.dart    # Phone number input for auth
+│   ├── otp_verification_page.dart # OTP verification screen
+│   ├── home_page.dart            # Main home screen
+│   ├── chat_page.dart            # Chat screen (placeholder)
+│   └── settings_page.dart        # Settings screen
+├── components/                   # Reusable UI components
+│   └── whatsapp_logo.dart        # Theme-aware WhatsApp logo
+└── services/                     # Business logic & services
+    └── chat/                     # Chat services
+        └── chat_service.dart     # Chat service (stub for future)
+
+android/
+├── app/
+│   └── build.gradle.kts          # App-level build configuration
+├── build.gradle.kts              # Project-level build configuration
+├── settings.gradle.kts           # Gradle settings with Flutter SDK
+├── gradle.properties             # Gradle properties
+└── local.properties              # Local SDK paths (gitignored)
 ```
 
 ## 🗺️ Development Roadmap
@@ -104,12 +204,12 @@ lib/
 - [x] Splash screen implementation
 - [x] WhatsApp-style branding
 
-### Phase 2: Authentication (Refactored)
+### Phase 2: Authentication ✅
 
-- [x] Removed old Firebase authentication
-- [x] Cleaned codebase for new auth implementation
-- [ ] WhatsApp-style phone number authentication (planned)
-- [ ] OTP verification flow (planned)
+- [x] Firebase Core & Auth integration
+- [x] WhatsApp-style phone number input page
+- [x] OTP verification page with auto-focus
+- [x] Country picker for phone codes
 - [ ] User profile management (planned)
 
 ### Phase 3: Core Features
@@ -144,10 +244,13 @@ lib/
 - **Language**: Dart 3.0.0+
 - **State Management**: Provider (theme management)
 - **Theming**: Material Design 3 with custom color system
-- **Backend**: To be determined (Firebase removed)
-- **Authentication**: To be implemented (WhatsApp-style)
-- **Database**: To be determined
-- **Storage**: To be determined
+- **Backend**: Firebase
+- **Authentication**: Firebase Auth (Phone/OTP)
+- **Build Tools**:
+  - Gradle 8.14
+  - Android Gradle Plugin 8.11.1
+  - Kotlin 2.2.20
+  - Java 17
 
 ## 📝 Documentation
 
@@ -182,6 +285,27 @@ This is a learning project. Feel free to:
 - Suggest improvements
 - Share learning resources
 - Fork and experiment
+
+### Setting Up for Development
+
+1. **Fork and clone** the repository
+2. **Install prerequisites** (see [Getting Started](#-getting-started))
+3. **Set up Android SDK** following the instructions above
+4. **Run `flutter doctor`** to verify your setup
+5. **Run the app** with `flutter run`
+
+### What Gets Auto-Generated
+
+The following files are **gitignored** and auto-generated locally:
+
+| File | Purpose | Generated By |
+|------|---------|--------------|
+| `android/local.properties` | SDK paths | Flutter |
+| `android/.gradle/` | Gradle cache | Gradle |
+| `build/` | Build artifacts | Flutter |
+| `.dart_tool/` | Dart tools | Dart |
+
+Flutter automatically detects your Android SDK from `ANDROID_HOME` environment variable or Android Studio installation.
 
 ## 📄 License
 
@@ -229,9 +353,19 @@ SplashPage (2.5 seconds)
   - WhatsApp logo
   - "from FACEBOOK" branding
     ↓
+PhoneNumberPage
+  - Country picker
+  - Phone number input
+    ↓
+OTPVerificationPage
+  - 6-digit OTP input
+  - Auto-focus between fields
+  - Firebase phone authentication
+    ↓
 HomePage
-  - Direct access (no authentication)
-  - Ready for new auth implementation
+  - Main chat interface
+  - Navigation drawer
+  - Settings access
 ```
 
 ## 🎉 Current Progress
@@ -260,28 +394,31 @@ HomePage
 **Code Quality:**
 
 - ✅ Clean codebase following KISS principles
-- ✅ Removed all Firebase dependencies
-- ✅ Removed old authentication flow
 - ✅ Improved component structure
 - ✅ Clean project organization
+- ✅ Kotlin DSL for Gradle build scripts
 
 **Android Configuration:**
 
 - ✅ App name configured ("WhatsApp Clone")
 - ✅ App icon generation setup
 - ✅ Clean Android build configuration
+- ✅ Kotlin DSL build scripts (`.gradle.kts`)
+- ✅ Java 17 compatibility
+- ✅ Android SDK 34 target
+- ✅ Gradle 8.14 with Android Gradle Plugin 8.11.1
 
 ### 🚧 In Progress
 
-- New authentication flow (WhatsApp-style)
-- Chat functionality
-- Backend integration
+- Chat list screen implementation
+- Individual chat screen
+- Real-time messaging with Firebase
 
 ### 📋 Next Steps
 
-- Implement WhatsApp-style phone number authentication
-- Add OTP verification flow
+- Complete OTP verification integration
 - Implement chat list screen
 - Add real-time messaging
 - User profile management
-- Backend integration (to be determined)
+- Push notifications
+- Message read receipts

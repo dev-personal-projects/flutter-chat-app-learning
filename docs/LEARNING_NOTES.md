@@ -206,4 +206,558 @@ A: Wrap your content in `SingleChildScrollView` for vertical scrolling, or use `
 
 ---
 
+### Date: January 2026
+
+#### Current Authentication Architecture (Phone / Email / Google)
+
+**App entry flow:**
+
+- `SplashPage` checks auth state via `AuthProvider`
+- If signed in → `HomePage`
+- If not signed in → `SignInPage` (single entry screen for all sign-in methods)
+
+**Sign-in methods implemented:**
+
+- **Phone OTP**: `PhoneNumberPage` → `OTPVerificationPage`
+- **Email/Password**: `EmailAuthPage` (register + sign-in toggle)
+- **Google OAuth**: Button on `SignInPage`
+
+**Code structure (best practice separation):**
+
+- **UI**: pages under `lib/pages/`
+- **State**: `AuthProvider` (tracks `AuthStatus`, loading, error, user)
+- **Firebase calls**: `AuthService` (wraps `firebase_auth` + `google_sign_in`)
+- **Navigation**: `AppRoutes` (central route names + helpers)
+
+**Important Firebase setup notes:**
+
+- Phone auth may require billing (error: `BILLING_NOT_ENABLED`) → use Email/Google as fallback during development.
+- Google sign-in requires adding **SHA-1** (and ideally SHA-256) in Firebase Project Settings and re-downloading `google-services.json`.
+
+---
+
+---
+
+## State Management in Flutter
+
+### Date: December 2025
+
+#### Understanding State in Flutter
+
+**What is State?**
+
+- State is any data that can change over time and affects what the user sees
+- Examples: user input, API data, theme preferences, authentication status
+- When state changes, Flutter rebuilds the UI to reflect the new state
+
+**Types of State:**
+
+1. **Local State**: State that belongs to a single widget (e.g., form input, loading indicator)
+2. **App State**: State that needs to be shared across multiple widgets (e.g., user authentication, theme, shopping cart)
+
+**Why State Management?**
+
+- As apps grow, managing state becomes complex
+- Need to share state between widgets that are far apart in the widget tree
+- Need to update UI when state changes
+- Need to handle async operations and side effects
+
+---
+
+#### State Management Solutions Comparison
+
+### 1. setState (Built-in)
+
+**What it is:**
+
+- Built into Flutter, no package needed
+- Used in `StatefulWidget` for local state
+
+**When to use:**
+
+- Simple local state (form inputs, UI toggles)
+- State that doesn't need to be shared
+- Small apps or simple widgets
+
+**Pros:**
+
+- No dependencies
+- Simple and straightforward
+- Perfect for local state
+
+**Cons:**
+
+- Only works within a single widget
+- Can't share state easily
+- Can cause unnecessary rebuilds
+
+**Example:**
+
+```dart
+class CounterWidget extends StatefulWidget {
+  @override
+  _CounterWidgetState createState() => _CounterWidgetState();
+}
+
+class _CounterWidgetState extends State<CounterWidget> {
+  int _count = 0;
+
+  void _increment() {
+    setState(() {
+      _count++;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Text('Count: $_count');
+  }
+}
+```
+
+---
+
+### 2. Provider (Currently Used in This Project)
+
+**What it is:**
+
+- Official Flutter team recommended solution
+- Built on top of `InheritedWidget`
+- Uses `ChangeNotifier` pattern
+
+**When to use:**
+
+- Medium to large apps
+- Need to share state across widgets
+- Want simple, readable code
+- Good balance of simplicity and power
+
+**Pros:**
+
+- Simple API
+- Good performance
+- Official recommendation
+- Great documentation
+- Easy to test
+
+**Cons:**
+
+- Can get verbose with many providers
+- Manual dependency injection
+- No compile-time safety
+
+**How it works:**
+
+```dart
+// 1. Create a ChangeNotifier
+class CounterProvider extends ChangeNotifier {
+  int _count = 0;
+  int get count => _count;
+
+  void increment() {
+    _count++;
+    notifyListeners(); // Notifies all listeners
+  }
+}
+
+// 2. Provide it at the top level
+MultiProvider(
+  providers: [
+    ChangeNotifierProvider(create: (_) => CounterProvider()),
+  ],
+  child: MyApp(),
+)
+
+// 3. Use it in widgets
+Consumer<CounterProvider>(
+  builder: (context, provider, child) {
+    return Text('Count: ${provider.count}');
+  },
+)
+```
+
+**In this project:**
+
+- `ThemeProvider` - manages theme mode
+- `AuthProvider` - manages authentication state
+
+---
+
+### 3. Riverpod
+
+**What it is:**
+
+- Created by the same author as Provider
+- Next-generation state management
+- Compile-time safe
+- More powerful than Provider
+
+**When to use:**
+
+- Large, complex apps
+- Need compile-time safety
+- Want better testing capabilities
+- Need dependency injection
+- Want to avoid BuildContext issues
+
+**Pros:**
+
+- Compile-time safety (catches errors at compile time)
+- No BuildContext needed to read state
+- Better testability
+- Automatic disposal
+- Can create providers without widgets
+- Great for dependency injection
+
+**Cons:**
+
+- Steeper learning curve
+- More boilerplate than Provider
+- Newer (less community resources)
+
+**Example:**
+
+```dart
+// 1. Define a provider
+final counterProvider = StateNotifierProvider<CounterNotifier, int>((ref) {
+  return CounterNotifier();
+});
+
+class CounterNotifier extends StateNotifier<int> {
+  CounterNotifier() : super(0);
+
+  void increment() => state++;
+}
+
+// 2. Use in widget
+class CounterWidget extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final count = ref.watch(counterProvider);
+    return Text('Count: $count');
+  }
+}
+```
+
+---
+
+### 4. BLoC (Business Logic Component)
+
+**What it is:**
+
+- Event-driven state management
+- Separates business logic from UI
+- Uses streams and events
+
+**When to use:**
+
+- Complex business logic
+- Need to handle many events
+- Want clear separation of concerns
+- Large teams (easier to maintain)
+- Need to test business logic separately
+
+**Pros:**
+
+- Clear separation of UI and business logic
+- Highly testable
+- Great for complex flows
+- Predictable state changes
+- Good documentation
+
+**Cons:**
+
+- Lots of boilerplate
+- Steeper learning curve
+- Can be overkill for simple apps
+- More files to manage
+
+**Example:**
+
+```dart
+// 1. Define events
+abstract class CounterEvent {}
+class IncrementEvent extends CounterEvent {}
+
+// 2. Define state
+class CounterState {
+  final int count;
+  CounterState(this.count);
+}
+
+// 3. Create BLoC
+class CounterBloc extends Bloc<CounterEvent, CounterState> {
+  CounterBloc() : super(CounterState(0)) {
+    on<IncrementEvent>((event, emit) {
+      emit(CounterState(state.count + 1));
+    });
+  }
+}
+
+// 4. Use in widget
+BlocBuilder<CounterBloc, CounterState>(
+  builder: (context, state) {
+    return Text('Count: ${state.count}');
+  },
+)
+```
+
+---
+
+### 5. GetX
+
+**What it is:**
+
+- All-in-one solution (state management, routing, dependency injection)
+- Very lightweight
+- High performance
+
+**When to use:**
+
+- Want everything in one package
+- Need simple routing
+- Want minimal boilerplate
+- Small to medium apps
+- Prefer reactive programming
+
+**Pros:**
+
+- Very simple API
+- Includes routing, dependency injection
+- High performance
+- Less boilerplate
+- Good for rapid development
+
+**Cons:**
+
+- Less separation of concerns
+- Can become hard to maintain in large apps
+- Less "Flutter way" (more opinionated)
+- Smaller community than Provider/BLoC
+
+**Example:**
+
+```dart
+// 1. Create controller
+class CounterController extends GetxController {
+  var count = 0.obs; // Observable
+
+  void increment() => count++;
+}
+
+// 2. Use in widget
+class CounterWidget extends StatelessWidget {
+  final controller = Get.put(CounterController());
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(() => Text('Count: ${controller.count}'));
+  }
+}
+```
+
+---
+
+### 6. MobX
+
+**What it is:**
+
+- Reactive state management
+- Uses code generation
+- Observable pattern
+
+**When to use:**
+
+- Like reactive programming
+- Want automatic UI updates
+- Don't mind code generation
+- Coming from React background
+
+**Pros:**
+
+- Very reactive
+- Less boilerplate
+- Automatic UI updates
+- Good for complex state
+
+**Cons:**
+
+- Requires code generation
+- Less "Flutter native"
+- Smaller community
+
+---
+
+### 7. Redux
+
+**What it is:**
+
+- Predictable state container
+- Single source of truth
+- Immutable state updates
+
+**When to use:**
+
+- Large, complex apps
+- Need time-travel debugging
+- Want predictable state flow
+- Coming from React/Redux background
+
+**Pros:**
+
+- Predictable state changes
+- Great debugging tools
+- Single source of truth
+- Time-travel debugging
+
+**Cons:**
+
+- Lots of boilerplate
+- Can be verbose
+- Steeper learning curve
+
+---
+
+### 8. useState (React-style Hooks)
+
+**What it is:**
+
+- Not native to Flutter
+- Would need a package like `flutter_hooks`
+- React-style hooks for Flutter
+
+**When to use:**
+
+- Coming from React background
+- Want hook-like API
+- Small to medium apps
+
+**Pros:**
+
+- Familiar if coming from React
+- Less boilerplate
+- Reusable logic
+
+**Cons:**
+
+- Not official Flutter way
+- Smaller community
+- Less documentation
+
+**Example (with flutter_hooks):**
+
+```dart
+class CounterWidget extends HookWidget {
+  @override
+  Widget build(BuildContext context) {
+    final count = useState(0);
+    return Text('Count: ${count.value}');
+  }
+}
+```
+
+---
+
+#### State Management Decision Guide
+
+**Choose setState when:**
+
+- ✅ Simple local state
+- ✅ State doesn't need to be shared
+- ✅ Small widget or simple app
+
+**Choose Provider when:**
+
+- ✅ Medium to large apps
+- ✅ Need to share state
+- ✅ Want official Flutter solution
+- ✅ Good balance of simplicity and power
+- ✅ **This is what we're using in this project!**
+
+**Choose Riverpod when:**
+
+- ✅ Large, complex apps
+- ✅ Need compile-time safety
+- ✅ Want better testing
+- ✅ Want to avoid BuildContext issues
+
+**Choose BLoC when:**
+
+- ✅ Complex business logic
+- ✅ Many events to handle
+- ✅ Large teams
+- ✅ Need clear separation of concerns
+- ✅ Want highly testable code
+
+**Choose GetX when:**
+
+- ✅ Want all-in-one solution
+- ✅ Need simple routing too
+- ✅ Want minimal boilerplate
+- ✅ Small to medium apps
+
+**Choose MobX when:**
+
+- ✅ Like reactive programming
+- ✅ Want automatic UI updates
+- ✅ Don't mind code generation
+
+**Choose Redux when:**
+
+- ✅ Very large, complex apps
+- ✅ Need time-travel debugging
+- ✅ Want single source of truth
+- ✅ Coming from React/Redux
+
+---
+
+#### State Management Best Practices
+
+1. **Start Simple**: Use `setState` for local state, Provider for shared state
+2. **Don't Over-Engineer**: Choose the simplest solution that works
+3. **Keep State Close**: Don't lift state higher than necessary
+4. **Separate Concerns**: Business logic in providers/BLoCs, UI in widgets
+5. **Test Your State**: Write tests for state management logic
+6. **Use const**: Use `const` widgets when possible to prevent rebuilds
+7. **Dispose Resources**: Always dispose controllers, streams, timers
+8. **Check mounted**: Always check `mounted` before using `context` in async callbacks
+
+---
+
+#### Common Patterns in This Project
+
+**Provider Pattern (Current):**
+
+```dart
+// Provider class
+class AuthProvider extends ChangeNotifier {
+  User? _user;
+  User? get user => _user;
+
+  Future<void> signIn() async {
+    // ... sign in logic
+    notifyListeners(); // Update UI
+  }
+}
+
+// Usage
+Consumer<AuthProvider>(
+  builder: (context, authProvider, child) {
+    return authProvider.user != null
+      ? HomePage()
+      : LoginPage();
+  },
+)
+```
+
+**Key Concepts:**
+
+- `ChangeNotifier` - base class for providers
+- `notifyListeners()` - tells widgets to rebuild
+- `Provider.of<T>(context)` - gets provider instance
+- `Consumer<T>` - widget that rebuilds when provider changes
+- `MultiProvider` - provides multiple providers
+
+---
+
 **Note**: Update this file regularly as you learn new concepts!

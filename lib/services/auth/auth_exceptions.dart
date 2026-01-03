@@ -139,3 +139,22 @@ class WeakPasswordException extends AuthException {
           isRetryable: true,
         );
 }
+
+class GoogleSignInCancelledException extends AuthException {
+  const GoogleSignInCancelledException()
+      : super(
+          message: 'Google sign-in was cancelled.',
+          code: 'google-signin-cancelled',
+          isRetryable: true,
+        );
+}
+
+class AccountExistsWithDifferentCredentialException extends AuthException {
+  const AccountExistsWithDifferentCredentialException()
+      : super(
+          message:
+              'An account already exists with a different sign-in method. Try signing in with email/password.',
+          code: 'account-exists-with-different-credential',
+          isRetryable: false,
+        );
+}

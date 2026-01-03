@@ -10,6 +10,7 @@ enum AuthStatus {
   verifyingOTP,
   signingIn,
   registering,
+  signingInWithGoogle,
   authenticated,
   unauthenticated,
   error,
@@ -32,7 +33,8 @@ class AuthProvider extends ChangeNotifier {
       _status == AuthStatus.sendingOTP ||
       _status == AuthStatus.verifyingOTP ||
       _status == AuthStatus.signingIn ||
-      _status == AuthStatus.registering;
+      _status == AuthStatus.registering ||
+      _status == AuthStatus.signingInWithGoogle;
 
   AuthProvider() {
     _initialize();
@@ -140,6 +142,21 @@ class AuthProvider extends ChangeNotifier {
       notifyListeners();
 
       await _authService.registerWithEmail(email: email, password: password);
+      _user = _authService.currentUser;
+      _status = AuthStatus.authenticated;
+      notifyListeners();
+    } catch (e) {
+      _handleError(e);
+    }
+  }
+
+  Future<void> signInWithGoogle() async {
+    try {
+      _status = AuthStatus.signingInWithGoogle;
+      _error = null;
+      notifyListeners();
+
+      await _authService.signInWithGoogle();
       _user = _authService.currentUser;
       _status = AuthStatus.authenticated;
       notifyListeners();

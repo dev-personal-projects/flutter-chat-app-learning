@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:chatapp/services/auth/auth_exceptions.dart';
 
 class AuthService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   Future<bool> isAuthenticated() async {
     return _firebaseAuth.currentUser != null;
@@ -75,6 +77,29 @@ class AuthService {
     }
   }
 
+  Future<UserCredential> signInWithGoogle() async {
+    try {
+      final googleUser = await _googleSignIn.signIn();
+      if (googleUser == null) {
+        throw const GoogleSignInCancelledException();
+      }
+
+      final googleAuth = await googleUser.authentication;
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      return await _firebaseAuth.signInWithCredential(credential);
+    } on FirebaseAuthException catch (e) {
+      throw _handleAuthException(e);
+    } on AuthException {
+      rethrow;
+    } catch (e) {
+      throw AuthenticationFailedException(e.toString());
+    }
+  }
+
   Future<UserCredential> verifyOTP({
     required String verificationId,
     required String code,
@@ -99,6 +124,8 @@ class AuthService {
 
   Future<void> signOut() async {
     try {
+      // Best-effort cleanup across providers
+      await _googleSignIn.signOut();
       await _firebaseAuth.signOut();
     } on FirebaseAuthException catch (e) {
       throw _handleAuthException(e);
@@ -142,6 +169,8 @@ class AuthService {
         return const EmailAlreadyInUseException();
       case 'weak-password':
         return const WeakPasswordException();
+      case 'account-exists-with-different-credential':
+        return const AccountExistsWithDifferentCredentialException();
       default:
         return AuthenticationFailedException(e.message);
     }

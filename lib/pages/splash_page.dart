@@ -4,7 +4,7 @@ import 'package:chatapp/components/whatsapp_logo.dart';
 import 'package:chatapp/constant/app_colors.dart';
 import 'package:chatapp/constant/app_typography.dart';
 import 'package:chatapp/pages/home_page.dart';
-import 'package:chatapp/pages/phone_number_page.dart';
+import 'package:chatapp/pages/sign_in_page.dart';
 import 'package:chatapp/services/auth/auth_provider.dart';
 
 class SplashPage extends StatefulWidget {
@@ -41,7 +41,7 @@ class _SplashPageState extends State<SplashPage> {
         context,
         MaterialPageRoute(
           builder: (context) =>
-              isAuthenticated ? const HomePage() : const PhoneNumberPage(),
+              isAuthenticated ? const HomePage() : const SignInPage(),
         ),
       );
     }

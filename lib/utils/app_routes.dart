@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:chatapp/pages/phone_number_page.dart';
 import 'package:chatapp/pages/otp_verification_page.dart';
 import 'package:chatapp/pages/email_auth_page.dart';
+import 'package:chatapp/pages/sign_in_page.dart';
 
 /// Centralized route management for the application
 ///
@@ -21,6 +22,7 @@ class AppRoutes {
   static const String phoneNumber = '/phone-number';
   static const String otpVerification = '/otp-verification';
   static const String emailAuth = '/email-auth';
+  static const String signIn = '/sign-in';
 
   // Private constructor to prevent instantiation
   // This is a utility class with only static members
@@ -37,6 +39,7 @@ class AppRoutes {
   /// - Handling edge cases (missing arguments, etc.)
   static Map<String, WidgetBuilder> getRoutes() {
     return {
+      signIn: (context) => const SignInPage(),
       phoneNumber: (context) => const PhoneNumberPage(),
       otpVerification: (context) {
         // Extract phone number from route arguments
@@ -59,6 +62,10 @@ class AppRoutes {
   /// ```
   static void navigateToPhoneNumber(BuildContext context) {
     Navigator.pushNamed(context, phoneNumber);
+  }
+
+  static void navigateToSignIn(BuildContext context) {
+    Navigator.pushNamed(context, signIn);
   }
 
   /// Helper method to navigate to OTP verification page
